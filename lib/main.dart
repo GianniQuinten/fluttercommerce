@@ -1,52 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+const double fem = 1.0; // Adjust the value as needed
 
-  // This widget is the root of your application.
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  const MyHomePage({Key? key, required this.title});
 
   final String title;
 
@@ -55,71 +33,227 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+    return const Scaffold(
+      body: SingleChildScrollView(
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+          children: [
+            // Add your design widgets here
+            CustomContent(),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+class CustomContent extends StatelessWidget {
+  const CustomContent({Key? key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Implement your content design here
+    return Container(
+          // homepagezSf (24:214)
+          padding:  EdgeInsets.fromLTRB(72*fem, 22*fem, 72*fem, 170*fem),
+          width:  double.infinity,
+          decoration:  BoxDecoration (
+            color:  Color(0xffffffff),
+          ),
+          child:
+          Column(
+            crossAxisAlignment:  CrossAxisAlignment.center,
+            children:  [
+              Container(
+                // navbarheader2G9H (8:131)
+                margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 0*fem, 116*fem),
+                padding:  EdgeInsets.fromLTRB(32*fem, 16*fem, 0*fem, 0*fem),
+                width:  double.infinity,
+                height:  72*fem,
+                decoration:  BoxDecoration (
+                  color:  Color(0xff89aae6),
+                  borderRadius:  BorderRadius.circular(20*fem),
+                  boxShadow:  [
+                    BoxShadow(
+                      color:  Color(0x260d1a26),
+                      offset:  Offset(0*fem, 2*fem),
+                      blurRadius:  3*fem,
+                    ),
+                  ],
+                ),
+                child:
+                Row(
+                  crossAxisAlignment:  CrossAxisAlignment.center,
+                  children:  [
+                    Container(
+                      // frame5J5y (I8:131;419:2885)
+                      margin:  EdgeInsets.fromLTRB(0*fem, 6*fem, 798*fem, 0*fem),
+                      padding:  EdgeInsets.fromLTRB(0*fem, 0*fem, 82*fem, 0*fem),
+                      height:  50.39*fem,
+                      child:
+                      Row(
+                        crossAxisAlignment:  CrossAxisAlignment.start,
+                        children:  [
+                          Container(
+                            // autogroupagpkzDh (PwC3JUcWr6gHu8c5ovAGpK)
+                            margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 46*fem, 0*fem),
+                            width:  60*fem,
+                            height:  double.infinity,
+                            child:
+                            Text(
+                              'Home',
+                              style: GoogleFonts.inter(
+                                fontSize: 20 * fem,
+                                fontWeight: FontWeight.w400,
+                                height: 1.5 * fem / fem,
+                                color: Color(0xffffffff),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            // doextraszN7 (I8:131;419:2894)
+                            margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 50*fem, 0*fem),
+                            child:
+                            Text(
+                              'Shoes',
+                              style: GoogleFonts.inter(
+                                fontSize: 20 * fem,
+                                fontWeight: FontWeight.w400,
+                                height: 1.5 * fem / fem,
+                                color: Color(0xffffffff),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            // docontactusgkj (I8:131;419:2896)
+                            'Contact',
+                            style: GoogleFonts.inter(
+                              fontSize: 20 * fem,
+                              fontWeight: FontWeight.w400,
+                              height: 1.5 * fem / fem,
+                              color: Color(0xffffffff),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      // actionsDVm (I8:131;419:2897)
+                      margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 0*fem, 16*fem),
+                      width:  168*fem,
+                      height:  40*fem,
+                      decoration:  BoxDecoration (
+                        borderRadius:  BorderRadius.circular(4*fem),
+                      ),
+                      child:
+                      Container(
+                        // button98X (I8:131;419:2898)
+                        padding:  EdgeInsets.fromLTRB(16*fem, 6*fem, 16*fem, 8*fem),
+                        width:  double.infinity,
+                        height:  double.infinity,
+                        decoration:  BoxDecoration (
+                          color:  Color(0xff246eb9),
+                          borderRadius:  BorderRadius.circular(4*fem),
+                        ),
+                        child:
+                        ButtonTheme(
+                          height:  double.infinity,
+                          child:
+                          Center(
+                            child:
+                            Text(
+                              'My Cart',
+                              style: GoogleFonts.inter(
+                                fontSize: 20 * fem,
+                                fontWeight: FontWeight.w400,
+                                height: 1.5 * fem / fem,
+                                color: Color(0xffffffff),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                // autogroupgudzke7 (PwC2yKVmaZBHSBC3UmgUdZ)
+                margin:  EdgeInsets.fromLTRB(23.06*fem, 0*fem, 0*fem, 0*fem),
+                width:  1255.06*fem,
+                height:  644*fem,
+                child:
+                Stack(
+                  children:  [
+                    Positioned(
+                      // buttonsij (11:175)
+                      left:  840.578125*fem,
+                      top:  536*fem,
+                      child:
+                      TextButton(
+                        onPressed:  () {},
+                        style:  TextButton.styleFrom (
+                          padding:  EdgeInsets.zero,
+                        ),
+                        child:
+                        Container(
+                          padding:  EdgeInsets.fromLTRB(34*fem, 8*fem, 34*fem, 8*fem),
+                          width:  274*fem,
+                          height:  94*fem,
+                          decoration:  BoxDecoration (
+                            color:  Color(0xff246eb9),
+                            borderRadius:  BorderRadius.circular(20*fem),
+                          ),
+                          child:
+                          Container(
+                            // autogroupwoa3hSs (PwC36u7UQKAQRkDEVHWoA3)
+                            margin:  EdgeInsets.fromLTRB(0*fem, 0*fem, 0*fem, 15*fem),
+                            padding:  EdgeInsets.fromLTRB(0*fem, 15*fem, 0*fem, 0*fem),
+                            width:  double.infinity,
+                            height:  63*fem,
+                            child:
+                            Text(
+                              'Explore more',
+                              style: GoogleFonts.inter(
+                                fontSize: 20 * fem,
+                                fontWeight: FontWeight.w400,
+                                height: 1.5 * fem / fem,
+                                color: Color(0xffffffff),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      // loremipsumdolorsitametconsecte (11:179)
+                      left:  700.0625*fem,
+                      top:  0*fem,
+                      child:
+                      Align(
+                        child:
+                        SizedBox(
+                          width:  555*fem,
+                          height:  480*fem,
+                          child:
+                          Text(
+                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ',
+                            style: GoogleFonts.inter(
+                              fontSize: 20 * fem,
+                              fontWeight: FontWeight.w400,
+                              height: 1.5 * fem / fem,
+                              color: Color(0xff000000),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+    }
 }
