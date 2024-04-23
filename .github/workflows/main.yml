@@ -1,0 +1,19 @@
+name: develop test 
+
+on:
+  push:
+    branches:
+      - 'develop'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install neccery (NPM) dependencies, cache them correctly
+     
+
+      # Run the tests
+      
