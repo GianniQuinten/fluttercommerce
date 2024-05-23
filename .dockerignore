@@ -9,7 +9,7 @@
 **/.venv
 **/.classpath
 **/.dockerignore
-**/.env
+backend/Sneaks-API/.env
 **/.git
 **/.gitignore
 **/.project
