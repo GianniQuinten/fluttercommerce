@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercommerce/src/views/shoe_overview_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/shoe_provider.dart';
-import '../models/shoe_model.dart';
 import 'shoe_details_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,7 +9,32 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sneaker Store'),
+        title: Text('JustShoes'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              // Implement search functionality
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              // Navigate to the cart page
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.info),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShoeOverviewPage(), // Replace 'example_shoe_id' with the desired shoe ID
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Consumer<ShoeProvider>(
         builder: (context, shoeProvider, child) {
@@ -21,7 +46,7 @@ class HomePage extends StatelessWidget {
             return Center(child: Text('No data available'));
           }
 
-          return ListView.builder( // Return the ListView.builder here
+          return ListView.builder(
             itemCount: shoeProvider.shoes.length,
             itemBuilder: (context, index) {
               final shoe = shoeProvider.shoes[index];
