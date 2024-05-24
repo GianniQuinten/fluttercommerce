@@ -20,11 +20,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      debugShowCheckedModeBanner: false, // Remove debug banner
+      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(),
-        '/shoeOverview': (context) => ShoeOverviewPage(),
+        '/shoeOverview': (context) => const ShoeOverviewPage(),
         '/shoeDetails': (context) => ShoeDetailsPage(),
         '/cart': (context) => CartPage(),
         '/contact': (context) => ContactPage(),
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return Scaffold(
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(80.0), // Set preferred height for the app bar
+            preferredSize: const Size.fromHeight(100.0),
             child: Container(
               margin: const EdgeInsets.fromLTRB(50, 25, 50, 25), // Add margins
               child: AppBar(
@@ -83,7 +83,7 @@ class NavButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        Navigator.pushNamed(context, route);
+        Navigator.pushNamed(context, route); // Use Navigator.pushNamed
       },
       child: Text(
         label,
