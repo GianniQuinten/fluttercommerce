@@ -11,27 +11,43 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('JustShoes'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.search),
+          TextButton(
             onPressed: () {
-              // Implement search functionality
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              );
             },
+            child: Text('Home'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShoeOverviewPage(),
+                ),
+              );
+            },
+            child: Text('Shoes'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShoeOverviewPage(), // Change to contact whenever it is made
+                ),
+              );
+            },
+            child: Text('Contact'),
           ),
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
               // Navigate to the cart page
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.info),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ShoeOverviewPage(), // Replace 'example_shoe_id' with the desired shoe ID
-                ),
-              );
             },
           ),
         ],
