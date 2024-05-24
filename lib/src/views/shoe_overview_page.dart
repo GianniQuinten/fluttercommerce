@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../widget/app_bar.dart';
+
 class ShoeOverviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Shoe Overview'),
-      ),
+      appBar: MyAppBar(title: 'JustShoes'), // Use the AppBar widget
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
