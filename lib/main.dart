@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ShoeProvider()..fetchShoes("Yeezy", 10)),
+        ChangeNotifierProvider(create: (_) => ShoeProvider()..fetchShoes("Adidas", 10)),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
