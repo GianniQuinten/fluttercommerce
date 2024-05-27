@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widget/app_bar.dart';
 
-class ShoeOverviewPage extends StatelessWidget {
+class ContactPage extends StatelessWidget {
+  const ContactPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +13,7 @@ class ShoeOverviewPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Welcome to the Shoe Store!',
+              'Welcome to the contact page!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ],
