@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercommerce/src/views/shoe_overview_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/shoe_provider.dart';
-import '../models/shoe_model.dart';
+import '../widget/app_bar.dart';
 import 'shoe_details_page.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Sneaker Store'),
-      ),
+      appBar: MyAppBar(title: 'JustShoes'), // Use the AppBar widget
       body: Consumer<ShoeProvider>(
         builder: (context, shoeProvider, child) {
           if (shoeProvider.isLoading) {
@@ -21,7 +20,7 @@ class HomePage extends StatelessWidget {
             return Center(child: Text('No data available'));
           }
 
-          return ListView.builder( // Return the ListView.builder here
+          return ListView.builder(
             itemCount: shoeProvider.shoes.length,
             itemBuilder: (context, index) {
               final shoe = shoeProvider.shoes[index];

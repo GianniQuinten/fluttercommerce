@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/sneaks_api_service.dart';
 import '../models/shoe_model.dart';
+import '../widget/app_bar.dart';
 
 class ShoeDetailsPage extends StatelessWidget {
   final String shoeId;
@@ -12,9 +13,7 @@ class ShoeDetailsPage extends StatelessWidget {
     final apiService = SneaksApiService();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Shoe Details'),
-      ),
+      appBar: MyAppBar(title: 'JustShoes'), // Use the AppBar widget
       body: FutureBuilder<Map<String, dynamic>>(
         future: apiService.fetchProductDetails(shoeId),
         builder: (context, snapshot) {
