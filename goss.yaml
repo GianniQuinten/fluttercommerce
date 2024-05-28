@@ -1,4 +1,11 @@
-# goss.yaml
+command:
+  nginx -t:
+    exit-status: 0
+    stdout:
+      - "nginx.conf test is successful"
+    stderr:
+      - ""
+
 port:
   tcp:80:
     listening: true
@@ -6,11 +13,6 @@ port:
       - 0.0.0.0
 
 file:
-  /usr/share/nginx/html/index.html:
+  /etc/nginx/nginx.conf:
     exists: true
-
-command:
-  nginx -t:
-    exit-status: 0
-    stdout:
-      - "nginx.conf test is successful"
+    mode: "0644"

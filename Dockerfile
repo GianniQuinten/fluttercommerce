@@ -9,7 +9,11 @@ RUN apt-get update && apt-get install -y \
   xz-utils \
   zip \
   libglu1-mesa \
-  sudo
+  sudo \
+  nginx  # Install Nginx
+
+# Copy your nginx.conf to the appropriate location
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Create a new user 'flutteruser'
 RUN useradd -m flutteruser && echo 'flutteruser ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/flutteruser
@@ -31,8 +35,8 @@ RUN sudo chown -R flutteruser:flutteruser /app
 # Install Flutter dependencies
 RUN flutter pub get
 
-# Commenting out the Flutter web build for now
-# RUN flutter build web --release
+# Build the Flutter web application
+RUN flutter build web --release
 
 # Install Goss for testing
 RUN curl -fsSL https://goss.rocks/install | sudo sh
@@ -41,8 +45,7 @@ RUN curl -fsSL https://goss.rocks/install | sudo sh
 FROM nginx:alpine
 
 # Copy built Flutter web app from builder stage
-# This step will need to be uncommented when re-enabling web build
-# COPY --from=builder /app/build/web /usr/share/nginx/html
+COPY --from=builder /app/build/web /usr/share/nginx/html
 
 # Copy Goss configuration file
 COPY goss.yaml /goss.yaml
@@ -50,5 +53,5 @@ COPY goss.yaml /goss.yaml
 # Expose port 80 to the outside world
 EXPOSE 80
 
-# Run Goss tests and start Nginx if tests pass
-CMD ["sh", "-c", "goss validate && nginx -g 'daemon off;'"]
+# Start Nginx and serve the content
+CMD ["nginx", "-g", "daemon off;"]
