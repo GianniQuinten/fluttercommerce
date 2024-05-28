@@ -55,30 +55,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa
-          git clone https://github.com/flutter/flutter.git /home/runner/flutter --branch stable --depth 1
-          export PATH="$PATH:/home/runner/flutter/bin"
-          flutter pub get
-
-      - name: Build Flutter Web
-        run: |
-          flutter build web --release
-
-  infrastructure_testing:
-    name: Infrastructure Testing
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Install Goss
         run: |
           curl -fsSL https://goss.rocks/install | sudo sh
-
       - name: Validate with Goss
         run: |
           goss validate
