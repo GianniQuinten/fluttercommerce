@@ -96,4 +96,8 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions
+        uses: actions/checkout@v2
+
+      - name: Run on self-hosted
+        run: |
+          echo "Running on self-hosted runner"
