@@ -1,8 +1,13 @@
 # Use an official Ubuntu image as a parent image
 FROM ubuntu:20.04 as builder
 
+# Set the timezone environment variable non-interactively
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
 # Install required dependencies
 RUN apt-get update && apt-get install -y \
+  tzdata \
   curl \
   git \
   unzip \
