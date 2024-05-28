@@ -34,8 +34,8 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . .
 
-# Change ownership of all files
-RUN sudo chown -R flutteruser:flutteruser /app
+# Change ownership of all files (without sudo)
+RUN chown -R flutteruser:flutteruser /app
 
 # Install Flutter dependencies
 RUN flutter pub get
