@@ -69,20 +69,20 @@ jobs:
       - name: Validate with Goss
         run: goss validate
 
-    infrastructure_testing:
-      name: Infrastructure Testing
-      runs-on: ubuntu-latest
+  infrastructure_testing:
+    name: Infrastructure Testing
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-        - name: Install Goss
-          run: |
-            curl -fsSL https://goss.rocks/install | sudo sh
+      - name: Install Goss
+        run: |
+          curl -fsSL https://goss.rocks/install | sudo sh
 
-        - name: Validate with Goss
-          run: goss validate
+      - name: Validate with Goss
+        run: goss validate
 
   push_dockerhub:
     name: Push to DockerHub
