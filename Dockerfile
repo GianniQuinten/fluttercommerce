@@ -27,11 +27,17 @@ RUN flutter pub get
 # Build the Flutter web application
 RUN flutter build web
 
+# Install Goss
+RUN curl -fsSL https://goss.rocks/install | sudo sh
+
 # Use nginx to serve the static content
 FROM nginx:alpine
 
 # Copy static assets from builder stage
 COPY --from=builder /app/build/web /usr/share/nginx/html
+
+# Copy Goss files
+COPY --from=builder /app/goss.yaml /goss.yaml
 
 # Expose port 80 to the outside world
 EXPOSE 80
