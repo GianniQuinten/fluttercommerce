@@ -15,17 +15,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa
-          git clone https://github.com/flutter/flutter.git /home/runner/flutter --branch stable --depth 1
-          export PATH="$PATH:/home/runner/flutter/bin"
-          flutter pub get
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      - name: Build Flutter Web
-        run: |
-          flutter build web --release
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: giannivanlooij/fluttercommerce:latest
 
   unittesting:
     name: Unit Testing
@@ -44,8 +48,7 @@ jobs:
           flutter pub get
 
       - name: Run Unit Tests
-        run: |
-          flutter test
+        run: flutter test
 
   prepare_release:
     name: Prepare Release
@@ -59,8 +62,21 @@ jobs:
         run: |
           curl -fsSL https://goss.rocks/install | sudo sh
       - name: Validate with Goss
+        run: goss validate
+
+  infrastructure_testing:
+    name: Infrastructure Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Goss
         run: |
-          goss validate
+          curl -fsSL https://goss.rocks/install | sudo sh
+      - name: Validate with Goss
+        run: goss validate
 
   push_dockerhub:
     name: Push to DockerHub
