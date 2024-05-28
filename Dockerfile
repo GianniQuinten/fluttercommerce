@@ -28,14 +28,11 @@ USER flutteruser
 RUN git clone https://github.com/flutter/flutter.git /home/flutteruser/flutter --branch stable --depth 1
 ENV PATH="/home/flutteruser/flutter/bin:${PATH}"
 
-# Set the working directory
+# Set the working directory and ensure it is owned by flutteruser
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY . .
-
-# Change ownership of all files (without sudo)
-RUN chown -R flutteruser:flutteruser /app
+COPY --chown=flutteruser:flutteruser . .
 
 # Install Flutter dependencies
 RUN flutter pub get
