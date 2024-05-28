@@ -19,59 +19,81 @@ class ShoeOverviewPage extends StatelessWidget {
             return Center(child: Text('No data available'));
           }
 
-          return GridView.builder(
-            padding: const EdgeInsets.all(25),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, // Number of items in a row
-              crossAxisSpacing: 25,
-              mainAxisSpacing: 10,
-              childAspectRatio: 2 / 1, // Adjust the aspect ratio as needed
-            ),
-            itemCount: shoeProvider.shoes.length,
-            itemBuilder: (context, index) {
-              final shoe = shoeProvider.shoes[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ShoeDetailsPage(shoeId: shoe.id),
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              double width = constraints.maxWidth;
+              int crossAxisCount = width > 1200 ? 4 : width > 800 ? 3 : 2;
+              double itemWidth = (width - (crossAxisCount - 1) * 25) / crossAxisCount;
+              double itemHeight = crossAxisCount == 4 ? itemWidth / 1.3 : crossAxisCount == 3 ? itemWidth / 1.225 : itemWidth / 1.175;
+              double aspectRatio = itemWidth / itemHeight;
+
+              return GridView.builder(
+                padding: const EdgeInsets.all(25),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 25,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: aspectRatio,
+                ),
+                itemCount: shoeProvider.shoes.length,
+                itemBuilder: (context, index) {
+                  final shoe = shoeProvider.shoes[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShoeDetailsPage(shoeId: shoe.id),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      elevation: 5,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: AspectRatio(
+                                aspectRatio: 2 / 1, // Adjust the aspect ratio as needed
+                                child: shoe.imageUrl.isNotEmpty
+                                    ? Image.network(
+                                  shoe.imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(Icons.error); // Display an error icon if the image fails to load
+                                  },
+                                )
+                                    : Icon(Icons.image_not_supported), // Display a placeholder icon if the URL is empty
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  shoe.name,
+                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(shoe.brand, style: TextStyle(fontSize: 12)),
+                                Text('\$${shoe.price.toString()}', style: TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  elevation: 5,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: shoe.imageUrl.isNotEmpty
-                            ? Image.network(
-                          shoe.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.error); // Display an error icon if the image fails to load
-                          },
-                        )
-                            : Icon(Icons.image_not_supported), // Display a placeholder icon if the URL is empty
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(shoe.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                            Text(shoe.brand),
-                            Text('\$${shoe.price.toString()}'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               );
             },
           );
