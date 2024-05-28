@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercommerce/src/views/shoe_overview_page.dart';
 import 'package:provider/provider.dart';
 import 'src/providers/shoe_provider.dart';
 import 'src/views/home_page.dart';
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ShoeProvider()..fetchShoes("Adidas", 10)),
+        ChangeNotifierProvider(create: (_) => ShoeProvider()..fetchShoes("Sneaker", 10)),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -22,7 +23,6 @@ class MyApp extends StatelessWidget {
         ),
         home: HomePage(),
       ),
-
     );
   }
 }
