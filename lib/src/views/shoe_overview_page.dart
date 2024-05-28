@@ -32,7 +32,7 @@ class ShoeOverviewPage extends StatelessWidget {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
                   crossAxisSpacing: 25,
-                  mainAxisSpacing: 10,
+                  mainAxisSpacing: 15,
                   childAspectRatio: aspectRatio,
                 ),
                 itemCount: shoeProvider.shoes.length,
@@ -47,11 +47,19 @@ class ShoeOverviewPage extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Card(
-                      shape: RoundedRectangleBorder(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white, // White background for the card
                         borderRadius: BorderRadius.circular(15.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: Offset(0, 3), // give a shadow to the container
+                          ),
+                        ],
                       ),
-                      elevation: 5,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
