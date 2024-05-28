@@ -2,7 +2,7 @@ name: CI for FlutterCommerce
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, docker ]
   pull_request:
     branches: [ develop, main ]
 
@@ -29,6 +29,7 @@ jobs:
         with:
           context: .
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             giannivanlooij/fluttercommerce:latest
             giannivanlooij/fluttercommerce:${{ github.run_number }}
@@ -41,13 +42,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
       - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y curl git unzip xz-utils zip libglu1-mesa
-          git clone https://github.com/flutter/flutter.git /home/runner/flutter --branch stable --depth 1
-          export PATH="$PATH:/home/runner/flutter/bin"
-          flutter pub get
+        run: flutter pub get
 
       - name: Run Unit Tests
         run: flutter test
@@ -55,18 +56,17 @@ jobs:
   prepare_release:
     name: Prepare Release
     runs-on: ubuntu-latest
+    needs: build  # This ensures the build job is completed successfully before running this job
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Build Docker Image
-        run: |
-          docker build -t giannivanlooij/fluttercommerce:release .
+        run: docker build -t giannivanlooij/fluttercommerce:release .
 
       - name: Install Goss
-        run: |
-          curl -fsSL https://goss.rocks/install | sudo sh
+        run: curl -fsSL https://goss.rocks/install | sudo sh
 
       - name: Validate with Goss
         run: goss validate
@@ -74,14 +74,14 @@ jobs:
   infrastructure_testing:
     name: Infrastructure Testing
     runs-on: ubuntu-latest
+    needs: build  # This ensures the build job is completed successfully before running this job
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Install Goss
-        run: |
-          curl -fsSL https://goss.rocks/install | sudo sh
+        run: curl -fsSL https://goss.rocks/install | sudo sh
 
       - name: Validate with Goss
         run: goss validate
@@ -89,6 +89,7 @@ jobs:
   push_dockerhub:
     name: Push to DockerHub
     runs-on: ubuntu-latest
+    needs: [build, prepare_release]  # This ensures both the build and prepare_release jobs are completed successfully before running this job
 
     steps:
       - name: Checkout code
@@ -104,3 +105,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            giannivanlooij/fluttercommerce:latest
+            giannivanlooij/fluttercommerce:${{ github.run_number }}
