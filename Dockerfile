@@ -24,7 +24,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 RUN useradd -m flutteruser && echo 'flutteruser ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/flutteruser
 USER flutteruser
 
-# Install Flutter
+# Install Flutter (latest stable)
 RUN git clone https://github.com/flutter/flutter.git /home/flutteruser/flutter --branch stable --depth 1
 ENV PATH="/home/flutteruser/flutter/bin:${PATH}"
 
@@ -41,7 +41,7 @@ RUN sudo chown -R flutteruser:flutteruser /app
 RUN flutter pub get
 
 # Build the Flutter web application
-RUN flutter build web --release
+RUN flutter clean && flutter build web --release
 
 # Install Goss for testing
 RUN curl -fsSL https://goss.rocks/install | sudo sh
@@ -54,6 +54,9 @@ COPY --from=builder /app/build/web /usr/share/nginx/html
 
 # Copy Goss configuration file
 COPY --from=builder /app/goss.yaml /goss.yaml
+
+# Copy the nginx.conf file
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80 to the outside world
 EXPOSE 80
