@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +32,7 @@ jobs:
           tags: giannivanlooij/fluttercommerce:latest
 
   unittesting:
+    name: Unit Testing
     runs-on: ubuntu-latest
 
     steps:
@@ -49,11 +51,16 @@ jobs:
         run: flutter test
 
   prepare_release:
+    name: Prepare Release
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Copy Nginx Config
+        run: |
+          cp nginx.conf ./
 
       - name: Build Docker Image
         run: |
@@ -67,11 +74,16 @@ jobs:
         run: goss validate
 
   infrastructure_testing:
+    name: Infrastructure Testing
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Copy Nginx Config
+        run: |
+          cp nginx.conf ./
 
       - name: Install Goss
         run: |
@@ -81,6 +93,7 @@ jobs:
         run: goss validate
 
   push_dockerhub:
+    name: Push to DockerHub
     runs-on: ubuntu-latest
 
     steps:
@@ -98,4 +111,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: giannivanlooij/fluttercommerce:latest, giannivanlooij/fluttercommerce:$(date +%Y%m%d%H%M%S)
+          tags: |
+            giannivanlooij/fluttercommerce:latest
+            giannivanlooij/fluttercommerce:${{ github.run_number }}
