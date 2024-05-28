@@ -47,7 +47,7 @@ RUN flutter clean && flutter build web --release
 RUN curl -fsSL https://goss.rocks/install | sudo sh
 
 # Use an official Nginx image as the base image for serving content
-FROM nginx:alpine
+FROM nginx:latest
 
 # Copy built Flutter web app from builder stage
 COPY --from=builder /app/build/web /usr/share/nginx/html
