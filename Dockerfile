@@ -9,7 +9,11 @@ RUN apt-get update && apt-get install -y \
   xz-utils \
   zip \
   libglu1-mesa \
-  sudo
+  sudo \
+  nginx
+
+# Copy your nginx.conf to the appropriate location
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Create a new user 'flutteruser'
 RUN useradd -m flutteruser && echo 'flutteruser ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/flutteruser
