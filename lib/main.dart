@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ShoeProvider()..fetchShoes("Adidas", 10)),
       ],
       child: MaterialApp(
-        title: 'Sneaker Store',
+        debugShowCheckedModeBanner: false,
+        title: 'JustShoes',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
