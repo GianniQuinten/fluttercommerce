@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercommerce/src/views/contact_page.dart';
 
 import '../views/home_page.dart';
 import '../views/shoe_overview_page.dart';
@@ -53,7 +54,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ShoeOverviewPage(), // Change to contact whenever it is made
+                  builder: (context) => ContactPage(), // Change to contact whenever it is made
                 ),
               );
             },
