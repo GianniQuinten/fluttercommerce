@@ -58,10 +58,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Copy Nginx Config
-        run: |
-          cp nginx.conf ./
-
       - name: Build Docker Image
         run: |
           docker build -t giannivanlooij/fluttercommerce:release .
@@ -73,24 +69,20 @@ jobs:
       - name: Validate with Goss
         run: goss validate
 
-  infrastructure_testing:
-    name: Infrastructure Testing
-    runs-on: ubuntu-latest
+    infrastructure_testing:
+      name: Infrastructure Testing
+      runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
 
-      - name: Copy Nginx Config
-        run: |
-          cp nginx.conf ./
+        - name: Install Goss
+          run: |
+            curl -fsSL https://goss.rocks/install | sudo sh
 
-      - name: Install Goss
-        run: |
-          curl -fsSL https://goss.rocks/install | sudo sh
-
-      - name: Validate with Goss
-        run: goss validate
+        - name: Validate with Goss
+          run: goss validate
 
   push_dockerhub:
     name: Push to DockerHub
