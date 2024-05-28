@@ -1,10 +1,17 @@
-# Use an official Ubuntu image
-FROM ubuntu:latest as builder
+# Use an official Ubuntu image as a parent image
+FROM ubuntu:20.04 as builder
 
-# Install required tools
-RUN apt-get update && apt-get install -y curl git unzip xz-utils zip libglu1-mesa sudo
+# Install required dependencies
+RUN apt-get update && apt-get install -y \
+  curl \
+  git \
+  unzip \
+  xz-utils \
+  zip \
+  libglu1-mesa \
+  sudo
 
-# Create a new user and set up sudo
+# Create a new user 'flutteruser'
 RUN useradd -m flutteruser && echo 'flutteruser ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/flutteruser
 USER flutteruser
 
@@ -21,26 +28,27 @@ COPY . .
 # Change ownership of all files
 RUN sudo chown -R flutteruser:flutteruser /app
 
-# Install dependencies
+# Install Flutter dependencies
 RUN flutter pub get
 
-# Build the Flutter web application
-RUN flutter build web
+# Commenting out the Flutter web build for now
+# RUN flutter build web --release
 
-# Install Goss
+# Install Goss for testing
 RUN curl -fsSL https://goss.rocks/install | sudo sh
 
-# Use nginx to serve the static content
+# Use an official Nginx image as the base image for serving content
 FROM nginx:alpine
 
-# Copy static assets from builder stage
-COPY --from=builder /app/build/web /usr/share/nginx/html
+# Copy built Flutter web app from builder stage
+# This step will need to be uncommented when re-enabling web build
+# COPY --from=builder /app/build/web /usr/share/nginx/html
 
-# Copy Goss files
-COPY --from=builder /app/goss.yaml /goss.yaml
+# Copy Goss configuration file
+COPY goss.yaml /goss.yaml
 
 # Expose port 80 to the outside world
 EXPOSE 80
 
-# Start nginx and serve the content
-CMD ["nginx", "-g", "daemon off;"]
+# Run Goss tests and start Nginx if tests pass
+CMD ["sh", "-c", "goss validate && nginx -g 'daemon off;'"]

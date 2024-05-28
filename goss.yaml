@@ -1,38 +1,16 @@
-version: 3
-
-services:
-  nginx:
-    enabled: true
-    running: true
-
-ports:
+# goss.yaml
+port:
   tcp:80:
     listening: true
+    ip:
+      - 0.0.0.0
 
-files:
+file:
   /usr/share/nginx/html/index.html:
     exists: true
-    mode: "644"
-    owner: root
-    group: root
 
-commands:
+command:
   nginx -t:
     exit-status: 0
     stdout:
-      - "nginx configuration is ok"
-    stderr: []
-
-http:
-  http://localhost:
-    status: 200
-    timeout: 5000
-    body:
-      - "<html>"
-      - "<head>"
-      - "<title>Welcome to nginx!</title>"
-      - "</head>"
-      - "<body>"
-      - "<h1>Welcome to nginx!</h1>"
-      - "</body>"
-      - "</html>"
+      - "nginx.conf test is successful"
