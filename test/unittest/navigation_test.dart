@@ -58,7 +58,7 @@ void main() {
     // Since ContactPage is not implemented, we check ShoeOverviewPage again
     await tester.tap(find.text('Contact'));
     await tester.pumpAndSettle();
-    expect(find.byType(ShoeOverviewPage), findsOneWidget);
+    expect(find.byType(ContactPage), findsOneWidget);
     print('Navigating to Contact');
   });
 }
