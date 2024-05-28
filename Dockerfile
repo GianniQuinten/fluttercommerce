@@ -41,7 +41,8 @@ RUN flutter pub get
 RUN flutter clean && flutter build web --release
 
 # Install Goss for testing
-RUN curl -fsSL https://goss.rocks/install | sudo sh
+USER root
+RUN curl -fsSL https://goss.rocks/install | sh
 
 # Use an official Nginx image as the base image for serving content
 FROM nginx:latest
@@ -50,7 +51,7 @@ FROM nginx:latest
 COPY --from=builder /app/build/web /usr/share/nginx/html
 
 # Copy Goss configuration file
-COPY --from=builder /app/goss.yaml /goss.yaml
+COPY --from=builder /goss.yaml /goss.yaml
 
 # Copy the nginx.conf file
 COPY nginx.conf /etc/nginx/nginx.conf
