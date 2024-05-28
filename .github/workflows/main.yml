@@ -44,9 +44,6 @@ jobs:
           tags: |
             giannivanlooij/fluttercommerce:latest
             giannivanlooij/fluttercommerce:${{ github.run_number }}
-        env:
-          DOCKER_BUILDKIT: 1
-          BUILDKIT_STEP_TIMEOUT: 300
 
   unittesting:
     name: Unit Testing
@@ -79,11 +76,8 @@ jobs:
       - name: Build Docker Image
         run: docker build -t giannivanlooij/fluttercommerce:release .
 
-      - name: Install Goss
-        run: curl -fsSL https://goss.rocks/install | sudo sh
-
       - name: Validate with Goss
-        run: goss validate
+        run: docker run --rm -v $(pwd)/goss.yaml:/goss.yaml giannivanlooij/fluttercommerce:release goss validate
 
   infrastructure_testing:
     name: Infrastructure Testing
@@ -94,11 +88,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Goss
-        run: curl -fsSL https://goss.rocks/install | sudo sh
-
       - name: Validate with Goss
-        run: goss validate
+        run: docker run --rm -v $(pwd)/goss.yaml:/goss.yaml giannivanlooij/fluttercommerce:release goss validate
 
   push_dockerhub:
     name: Push to DockerHub
@@ -124,6 +115,3 @@ jobs:
           tags: |
             giannivanlooij/fluttercommerce:latest
             giannivanlooij/fluttercommerce:${{ github.run_number }}
-        env:
-          DOCKER_BUILDKIT: 1
-          BUILDKIT_STEP_TIMEOUT: 300

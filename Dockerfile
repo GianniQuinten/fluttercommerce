@@ -50,8 +50,8 @@ FROM nginx:latest
 # Copy built Flutter web app from builder stage
 COPY --from=builder /app/build/web /usr/share/nginx/html
 
-# Copy Goss configuration file
-COPY --from=builder /goss.yaml /goss.yaml
+# Copy Goss configuration file from local context
+COPY goss.yaml /goss.yaml
 
 # Copy the nginx.conf file
 COPY nginx.conf /etc/nginx/nginx.conf
