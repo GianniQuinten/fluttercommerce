@@ -44,6 +44,7 @@ jobs:
           tags: |
             giannivanlooij/fluttercommerce:latest
             giannivanlooij/fluttercommerce:${{ github.run_number }}
+            giannivanlooij/fluttercommerce:release
 
   unittesting:
     name: Unit Testing
@@ -82,7 +83,7 @@ jobs:
   infrastructure_testing:
     name: Infrastructure Testing
     runs-on: ubuntu-latest
-    needs: build  # This ensures the build job is completed successfully before running this job
+    needs: [build, prepare_release]  # Ensure both the build and prepare_release jobs are completed successfully before running this job
 
     steps:
       - name: Checkout code
@@ -94,7 +95,7 @@ jobs:
   push_dockerhub:
     name: Push to DockerHub
     runs-on: ubuntu-latest
-    needs: [build, prepare_release]  # This ensures both the build and prepare_release jobs are completed successfully before running this job
+    needs: [build, prepare_release]  # Ensure both the build and prepare_release jobs are completed successfully before running this job
 
     steps:
       - name: Checkout code
@@ -115,3 +116,4 @@ jobs:
           tags: |
             giannivanlooij/fluttercommerce:latest
             giannivanlooij/fluttercommerce:${{ github.run_number }}
+            giannivanlooij/fluttercommerce:release
