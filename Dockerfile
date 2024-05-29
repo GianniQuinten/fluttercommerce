@@ -56,6 +56,9 @@ COPY goss.yaml /goss.yaml
 # Copy the nginx.conf file
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Copy the Goss binary from the builder stage
+COPY --from=builder /usr/local/bin/goss /usr/local/bin/goss
+
 # Expose port 80 to the outside world
 EXPOSE 80
 
