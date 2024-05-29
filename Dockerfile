@@ -59,5 +59,4 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Expose port 80 to the outside world
 EXPOSE 80
 
-# Start Nginx and serve the content
-CMD ["nginx", "-g", "daemon off;"]
+# Start
