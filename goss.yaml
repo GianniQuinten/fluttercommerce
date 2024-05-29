@@ -1,38 +1,18 @@
-version: 3
-
-services:
-  nginx:
-    enabled: true
-    running: true
-
-ports:
-  tcp:80:
-    listening: true
-
-files:
-  /usr/share/nginx/html/index.html:
-    exists: true
-    mode: "644"
-    owner: root
-    group: root
-
-commands:
+command:
   nginx -t:
     exit-status: 0
     stdout:
-      - "nginx configuration is ok"
-    stderr: []
+      - "nginx: configuration file /etc/nginx/nginx.conf test is successful"
+    stderr:
+      - ""
 
-http:
-  http://localhost:
-    status: 200
-    timeout: 5000
-    body:
-      - "<html>"
-      - "<head>"
-      - "<title>Welcome to nginx!</title>"
-      - "</head>"
-      - "<body>"
-      - "<h1>Welcome to nginx!</h1>"
-      - "</body>"
-      - "</html>"
+port:
+  tcp:80:
+    listening: true
+    ip:
+      - 0.0.0.0
+
+file:
+  /etc/nginx/nginx.conf:
+    exists: true
+    mode: "0644"
