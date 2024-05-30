@@ -1,18 +1,6 @@
-command:
-  nginx -t:
-    exit-status: 0
-    stdout:
-      - "nginx: configuration file /etc/nginx/nginx.conf test is successful"
-    stderr:
-      - ""
-
+file:
+  /etc/myapp/config.yaml:
+    exists: true
 port:
   tcp:80:
     listening: true
-    ip:
-      - 0.0.0.0
-
-file:
-  /etc/nginx/nginx.conf:
-    exists: true
-    mode: "0644"
