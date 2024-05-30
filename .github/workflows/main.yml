@@ -26,6 +26,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.10.5' # specify the appropriate Flutter version
+
       - name: Install dependencies
         run: flutter pub get
 
