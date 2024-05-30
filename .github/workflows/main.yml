@@ -1,4 +1,4 @@
-name: Docker Flutter CI
+name: FlutterCommerce CI
 
 on:
   push:
@@ -14,10 +14,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+
       - name: Build Docker image
-        run: docker build -t my-docker-flutter:latest .
+        run: docker build -t fluttercommerce:latest .
 
   unittesting:
     runs-on: ubuntu-latest
@@ -25,9 +27,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: flutter pub get
+
       - name: Run unit tests
-        run: |
-          docker run --rm my-docker-flutter:latest flutter test
+        run: flutter test
 
   prepare_release:
     runs-on: ubuntu-latest
@@ -35,10 +40,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Prepare release
+
+      - name: Bump version and create changelog
         run: |
-          # Add commands to prepare the release
-          echo "Preparing release"
+          # Commands to bump version and create a changelog
+          # This can be customized based on your release process
+          echo "Prepare release steps go here"
 
   infrastructure_testing:
     runs-on: ubuntu-latest
@@ -46,10 +53,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Test infrastructure
+
+      - name: Run infrastructure tests
         run: |
-          # Add commands to test the infrastructure
-          echo "Testing infrastructure"
+          # Commands to test your infrastructure
+          echo "Infrastructure testing steps go here"
 
   push_dockerhub:
     runs-on: ubuntu-latest
@@ -57,12 +65,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Log in to DockerHub
-        uses: docker/login-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      - name: Push to DockerHub
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push Docker image to DockerHub
         run: |
-          docker tag my-docker-flutter:latest my-dockerhub-repo/my-docker-flutter:latest
-          docker push my-dockerhub-repo/my-docker-flutter:latest
+          docker tag fluttercommerce:latest ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
