@@ -84,7 +84,7 @@ jobs:
 
   push_dockerhub:
     runs-on: ubuntu-latest
-    needs: push_dockerhub
+    needs: security_testing
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
