@@ -7,21 +7,17 @@ ENV TZ=Etc/UTC
 
 # Install required dependencies
 RUN apt-get update && apt-get install -y \
-  tzdata \
   curl \
   git \
   unzip \
   xz-utils \
-  zip \
   libglu1-mesa \
-  sudo \
-  nginx
+  sudo
 
-# Copy your nginx.conf to the appropriate location
-COPY nginx.conf /etc/nginx/nginx.conf
+# Create the sudoers.d directory if it doesn't exist and create a new user 'flutteruser'
+RUN mkdir -p /etc/sudoers.d && \
+    useradd -m flutteruser && echo 'flutteruser ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/flutteruser
 
-# Create a new user 'flutteruser'
-RUN useradd -m flutteruser && echo 'flutteruser ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/flutteruser
 USER flutteruser
 
 # Install Flutter (latest stable)
@@ -40,24 +36,11 @@ RUN flutter pub get
 # Build the Flutter web application
 RUN flutter clean && flutter build web --release
 
-# Install Goss for testing
-USER root
-RUN curl -fsSL https://goss.rocks/install | sh
-
 # Use an official Nginx image as the base image for serving content
 FROM nginx:latest
 
 # Copy built Flutter web app from builder stage
 COPY --from=builder /app/build/web /usr/share/nginx/html
-
-# Copy Goss configuration file from local context
-COPY goss.yaml /goss.yaml
-
-# Copy the nginx.conf file
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Copy the Goss binary from the builder stage
-COPY --from=builder /usr/local/bin/goss /usr/local/bin/goss
 
 # Expose port 80 to the outside world
 EXPOSE 80
