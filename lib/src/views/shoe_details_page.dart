@@ -1,46 +1,62 @@
 import 'package:flutter/material.dart';
-import '../services/sneaks_api_service.dart';
-import '../models/shoe_model.dart';
+import 'package:provider/provider.dart';
 import '../widget/app_bar.dart';
+import '../providers/shoe_provider.dart';
 
 class ShoeDetailsPage extends StatelessWidget {
   final String shoeId;
+  final String shoeName;
+  final String shoeImageURL;
+  final String shoeBrand;
+  final double shoePrice;
 
-  ShoeDetailsPage({required this.shoeId});
+  const ShoeDetailsPage({
+    Key? key,
+    required this.shoeId,
+    required this.shoeName,
+    required this.shoeImageURL,
+    required this.shoeBrand,
+    required this.shoePrice,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final apiService = SneaksApiService();
-
     return Scaffold(
-      appBar: MyAppBar(title: 'JustShoes'), // Use the AppBar widget
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: apiService.fetchProductDetails(shoeId),
+      appBar: MyAppBar(title: 'JustShoes'),
+      body: FutureBuilder(
+        future: Provider.of<ShoeProvider>(context, listen: false).fetchShoeDetails(shoeId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text('No data available'));
+            return Center(child: Text('Error loading shoe details'));
           } else {
-            final shoe = Shoe.fromJson(snapshot.data!);
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Image.network(shoe.imageUrl),
-                  SizedBox(height: 16),
-                  Text(
-                    shoe.name,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            return Consumer<ShoeProvider>(
+              builder: (context, shoeProvider, child) {
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 320,
+                        height: 320,
+                        child: Image.network(
+                          shoeImageURL,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        shoeName,
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      Text(shoeBrand, style: TextStyle(fontSize: 20)),
+                      Text('\$${shoePrice}', style: TextStyle(fontSize: 20)),
+                    ],
                   ),
-                  Text(shoe.brand, style: TextStyle(fontSize: 20)),
-                  SizedBox(height: 16),
-                  Text('\$${shoe.price}', style: TextStyle(fontSize: 20)),
-                ],
-              ),
+                );
+              },
             );
           }
         },
