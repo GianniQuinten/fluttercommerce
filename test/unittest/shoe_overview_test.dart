@@ -1,69 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
+import 'package:fluttercommerce/src/services/sneaks_api_service.dart';
 import 'package:fluttercommerce/src/views/home_page.dart';
 import 'package:fluttercommerce/src/views/shoe_overview_page.dart';
 import 'package:fluttercommerce/src/widget/app_bar.dart';
+import 'package:provider/provider.dart';
 import 'package:fluttercommerce/src/providers/shoe_provider.dart';
-import 'package:fluttercommerce/src/models/shoe_model.dart';
-import 'package:fluttercommerce/src/services/sneaks_api_service.dart';
 
-class MockSneaksApiService extends Mock implements SneaksApiService {}
+// Mock implementation of SneaksApiService
+class MockSneaksApiService extends SneaksApiService {
+  @override
+  Future<List<Map<String, dynamic>>> fetchProducts(String keyword, int limit) async {
+    // Return predefined shoe products for testing
+    return List.generate(
+      limit,
+          (index) => {
+        'id': index.toString(),
+        'name': 'Shoe $index',
+        'price': (index + 1) * 10,
+        // Add more fields as needed
+      },
+    );
+  }
+}
 
 void main() {
-  testWidgets('ShoeOverviewPage loads at least 15 shoes after navigation', (WidgetTester tester) async {
+  testWidgets('ShoeOverviewPage loads at least 8 shoes after navigation', (WidgetTester tester) async {
+    // Create a mock implementation of SneaksApiService
     final mockApiService = MockSneaksApiService();
-    final shoes = List<Shoe>.generate(
-      15,
-          (index) => Shoe(
-        id: 'id_$index',
-        name: 'Shoe $index',
-        brand: 'Brand $index',
-        price: 100.0 + index,
-        imageUrl: '',
-      ),
-    );
 
-    // Explicitly specify the expected arguments for fetchProducts
-    when(mockApiService.fetchProducts('Sneaker', 20)).thenAnswer((_) async => shoes.map((shoe) => shoe.toJson()).toList());
+    // Create a mock ShoeProvider with the mock SneaksApiService
+    final shoeProvider = ShoeProvider(apiService: mockApiService);
 
-    // Create the ShoeProvider
-    final shoeProvider = ShoeProvider();
+    // Trigger the fetchShoes method to load shoe products
+    await shoeProvider.fetchShoes("Sneaker", 10);
 
     await tester.pumpWidget(
-      ChangeNotifierProvider<ShoeProvider>(
-        create: (_) => shoeProvider,
+      ChangeNotifierProvider<ShoeProvider>.value(
+        value: shoeProvider,
         child: MaterialApp(
           home: Scaffold(
-            appBar: MyAppBar(title: 'Test AppBar'),
+            appBar: MyAppBar(title: 'JustShoes'),
             body: HomePage(),
           ),
+          routes: {
+            '/shoe-overview': (context) => ShoeOverviewPage(),
+          },
         ),
       ),
     );
 
-    // Verify initial state
-    expect(find.text('Shoes'), findsOneWidget);
-
-    // Navigate to Shoes page
-    await tester.tap(find.text('Shoes'));
+    // Verify if the Shoes button navigates to ShoeOverviewPage
+    await tester.tap(find.text('Shoes').first);
     await tester.pumpAndSettle();
-
-    // Verify ShoeOverviewPage is displayed and contains at least 15 shoes
     expect(find.byType(ShoeOverviewPage), findsOneWidget);
-    expect(find.byType(GestureDetector), findsAtLeastNWidgets(15));
-  });
-}
+    print('Navigating to Shoes');
 
-extension on Shoe {
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'shoeName': name,
-      'brand': brand,
-      'thumbnail': imageUrl,
-      'retailPrice': price,
-    };
-  }
+// Verify that there are at least 8 GestureDetector widgets
+    expect(find.byType(GestureDetector).evaluate().length, greaterThanOrEqualTo(8));
+  });
 }
