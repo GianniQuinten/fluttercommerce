@@ -3,7 +3,10 @@ import '../models/shoe_model.dart';
 import '../services/sneaks_api_service.dart';
 
 class ShoeProvider with ChangeNotifier {
-  final SneaksApiService apiService = SneaksApiService();
+  final SneaksApiService apiService; // Define apiService
+
+  ShoeProvider({required this.apiService}); // Constructor with apiService parameter
+
   List<Shoe> _shoes = [];
   bool _isLoading = false;
 
