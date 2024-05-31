@@ -176,7 +176,7 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            fluttercommerce:latest
+            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
   security_testing:
     runs-on: ubuntu-latest
