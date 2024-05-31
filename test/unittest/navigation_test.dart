@@ -6,11 +6,14 @@ import 'package:fluttercommerce/src/views/contact_page.dart';
 import 'package:fluttercommerce/src/widget/app_bar.dart';
 import 'package:fluttercommerce/src/providers/shoe_provider.dart';
 import 'package:provider/provider.dart';
+import 'shoe_overview_test.dart';
 
 void main() {
   testWidgets('MyAppBar navigates to the correct pages', (WidgetTester tester) async {
+    final mockApiService = MockSneaksApiService();
+
     // Define the providers required for the test
-    final shoeProvider = ShoeProvider();
+    final shoeProvider = ShoeProvider(apiService: mockApiService);
 
     // Create a test widget with the MyAppBar wrapped in the necessary providers
     await tester.pumpWidget(
