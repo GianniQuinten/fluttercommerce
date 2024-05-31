@@ -70,7 +70,6 @@ jobs:
           # Commands to test your infrastructure
           echo "Infrastructure testing steps go here"
 
-
   push_dockerhub:
     runs-on: ubuntu-latest
     needs: infrastructure_testing
@@ -110,4 +109,3 @@ jobs:
 
       - name: Run Docker Scout analysis
         run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-
