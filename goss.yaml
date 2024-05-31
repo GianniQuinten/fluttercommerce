@@ -1,0 +1,6 @@
+file:
+  /etc/myapp/config.yaml:
+    exists: true
+port:
+  tcp:80:
+    listening: true
