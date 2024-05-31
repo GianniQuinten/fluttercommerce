@@ -62,53 +62,56 @@ jobs:
           name: android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
-    build_ios:
-      runs-on: macos-latest
-      needs: build
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
 
-        - name: Set up Flutter
-          uses: subosito/flutter-action@v2
-          with:
-            flutter-version: '3.22.1'
 
-        - name: Install Dependencies
-          run: flutter pub get
+  build_ios:
+    runs-on: macos-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-        - name: Build iOS App
-          run: flutter build ios --release --no-codesign
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
 
-        - name: Archive iOS App
-          uses: actions/upload-artifact@v2
-          with:
-            name: ios-app
-            path: build/ios/Release-iphoneos/*.app
+      - name: Install Dependencies
+        run: flutter pub get
 
-    build_windows:
-      runs-on: windows-latest
-      needs: build
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
+      - name: Build iOS App
+        run: flutter build ios --release --no-codesign
 
-        - name: Set up Flutter
-          uses: subosito/flutter-action@v2
-          with:
-            flutter-version: '3.22.1'
+      - name: Archive iOS App
+        uses: actions/upload-artifact@v2
+        with:
+          name: ios-app
+          path: build/ios/Release-iphoneos/*.app
 
-        - name: Install Dependencies
-          run: flutter pub get
 
-        - name: Build Windows App
-          run: flutter build windows --release
+  build_windows:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-        - name: Archive Windows App
-          uses: actions/upload-artifact@v2
-          with:
-            name: windows-app
-            path: build/windows/runner/Release
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Windows App
+        run: flutter build windows --release
+
+      - name: Archive Windows App
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-app
+          path: build/windows/runner/Release
 
   unittesting:
     runs-on: ubuntu-latest
