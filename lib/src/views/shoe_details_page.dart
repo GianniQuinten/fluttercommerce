@@ -6,8 +6,18 @@ import '../providers/shoe_provider.dart';
 class ShoeDetailsPage extends StatelessWidget {
   final String shoeId;
   final String shoeName;
+  final String shoeImageURL;
+  final String shoeBrand;
+  final double shoePrice;
 
-  const ShoeDetailsPage({Key? key, required this.shoeId, required this.shoeName}) : super(key: key);
+  const ShoeDetailsPage({
+    Key? key,
+    required this.shoeId,
+    required this.shoeName,
+    required this.shoeImageURL,
+    required this.shoeBrand,
+    required this.shoePrice,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +33,28 @@ class ShoeDetailsPage extends StatelessWidget {
           } else {
             return Consumer<ShoeProvider>(
               builder: (context, shoeProvider, child) {
-                final shoe = shoeProvider.selectedShoe;
-                return Column(
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(
+                        width: 320,
+                        height: 320,
+                        child: Image.network(
+                          shoeImageURL,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(height: 16),
                       Text(
                         shoeName,
                         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
+                      Text(shoeBrand, style: TextStyle(fontSize: 20)),
+                      Text('\$${shoePrice}', style: TextStyle(fontSize: 20)),
                     ],
+                  ),
                 );
               },
             );
