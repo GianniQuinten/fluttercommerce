@@ -70,22 +70,9 @@ jobs:
           # Commands to test your infrastructure
           echo "Infrastructure testing steps go here"
 
-  security_testing:
-    runs-on: ubuntu-latest
-    needs: infrastructure_testing
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Docker Scout
-        run: curl -sSL https://get.docker.com/ | sh
-
-      - name: Run Docker Scout analysis
-        run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-
   push_dockerhub:
     runs-on: ubuntu-latest
-    needs: build
+    needs: infrastructure_testing
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -107,6 +94,19 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+  security_testing:
+    runs-on: ubuntu-latest
+    needs: push_dockerhub
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Docker Scout
+        run: curl -sSL https://get.docker.com/ | sh
+
+      - name: Run Docker Scout analysis
+        run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
 
 #Explanation of Each Job:
