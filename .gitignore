@@ -44,5 +44,4 @@ app.*.map.json
 
 #  backend directory for running the api on a backend server
 backend/node_modules
-backend/package.json
-backend/package-lock.json
+
