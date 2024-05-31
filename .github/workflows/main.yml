@@ -87,14 +87,16 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Debug DockerHub Tag
+        run: echo "DockerHub Tag: ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
   security_testing:
     runs-on: ubuntu-latest
@@ -109,28 +111,3 @@ jobs:
       - name: Run Docker Scout analysis
         run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
-
-#Explanation of Each Job:
-#Build:
-#
-#  Checks out the code, sets up Flutter, installs dependencies, builds the Flutter web application, and sets up Docker Buildx.
-#Unittesting:
-#
-#  Depends on the build job.
-#  Checks out the code, sets up Flutter, installs dependencies, and runs unit tests.
-#Prepare Release:
-#
-#  Depends on the unittesting job.
-#  Checks out the code and runs steps to prepare the release (e.g., bumping version, creating a changelog).
-#Infrastructure Testing:
-#
-#  Depends on the prepare_release job.
-#  Checks out the code and runs infrastructure tests.
-#Push Docker Hub:
-#
-#  Depends on the infrastructure_testing job.
-#  Checks out the code, sets up Docker Buildx, logs into Docker Hub, builds, and pushes the Docker image.
-#Security Testing:
-#
-#  Depends on the push_dockerhub job.
-#  Checks out the code, installs Docker, installs Docker Scout, pulls the Docker image from Docker Hub, and runs Docker Scout for security analysis.
