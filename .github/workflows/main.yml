@@ -185,11 +185,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Docker Scout
-        run: curl -sSL https://get.docker.com/ | sh
-
-      - name: Run Docker Scout analysis
-        run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+#      - name: Install Docker Scout
+#        run: curl -sSL https://get.docker.com/ | sh
+#
+#      - name: Run Docker Scout analysis
+#        run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
 
 #Explanation of Each Job:
