@@ -31,11 +31,11 @@ jobs:
 #        run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
 
 
-      - name: Save Docker image artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: docker-image
-          path: image.tar
+#      - name: Save Docker image artifact
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: docker-image
+#          path: image.tar
 
   unittesting:
     runs-on: ubuntu-latest
