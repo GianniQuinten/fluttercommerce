@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ShoeProvider()..fetchShoes("Sneaker", 20)),
+        ChangeNotifierProvider(create: (_) => ShoeProvider()..fetchShoes("Air Force", 20)),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: HomePage(),
+        home: ShoeOverviewPage(),
       ),
     );
   }

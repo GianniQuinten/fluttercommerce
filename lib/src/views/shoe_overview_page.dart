@@ -43,7 +43,7 @@ class ShoeOverviewPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ShoeDetailsPage(shoeId: shoe.id),
+                          builder: (context) => ShoeDetailsPage(shoeId: shoe.id, shoeName: shoe.name),
                         ),
                       );
                     },
