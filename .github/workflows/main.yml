@@ -2,7 +2,7 @@ name: CI for FlutterCommerce
 
 on:
   push:
-    branches: [ develop, docker ]
+    branches: [ develop, docker, pipelineSecurity ]
   pull_request:
     branches: [ develop, main ]
 
