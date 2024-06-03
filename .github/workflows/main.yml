@@ -197,14 +197,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-      - name: Install Docker Scan
-        run: curl -sSL https://get.docker.com/ | sh
+      - name: Install Docker Scout
+        run: |
+          DOCKER_SCOUT_VERSION=$(curl -s https://api.github.com/repos/docker/scout-cli/releases/latest | grep tag_name | cut -d '"' -f 4)
+          curl -sSL https://github.com/docker/scout-cli/releases/download/$DOCKER_SCOUT_VERSION/scout-linux-amd64 -o /usr/local/bin/scout
+          sudo chmod +x /usr/local/bin/scout
 
       - name: Docker Login
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
-      - name: Run Docker Scan
-        run: docker scan ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest --accept-license --json
+      - name: Run Docker Scout analysis
+        run: scout quickview ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
 
 
