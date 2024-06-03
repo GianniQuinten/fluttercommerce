@@ -203,6 +203,9 @@ jobs:
           chmod +x docker-scout
           sudo mv docker-scout /usr/local/bin/docker-scout
 
+      - name: Verify Docker Scout Installation
+        run: docker-scout --version
+
       - name: Docker Login
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
