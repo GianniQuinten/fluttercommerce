@@ -147,7 +147,7 @@
 #      - name: Run Unit Tests
 #        run: flutter test
 #
-#  prepare_release:
+#  prepare_release.yml:
 #    runs-on: ubuntu-latest
 #    needs: [test_web, test_android, test_ios, test_windows]
 #    steps:
@@ -162,7 +162,7 @@
 #
 #  infrastructure_testing:
 #    runs-on: ubuntu-latest
-#    needs: prepare_release
+#    needs: prepare_release.yml
 #    steps:
 #      - name: Checkout code
 #        uses: actions/checkout@v2

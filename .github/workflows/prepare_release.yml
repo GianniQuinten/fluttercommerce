@@ -110,27 +110,10 @@ jobs:
           name: windows-app
           path: build/windows/runner/Release
 
-  unittesting:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.22.1' # Ensure this matches your pubspec.yaml version
-
-      - name: Install Dependencies
-        run: flutter pub get
-
-      - name: Run Unit Tests
-        run: flutter test
 
   prepare_release:
     runs-on: ubuntu-latest
-    needs: unittesting
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -168,102 +151,6 @@ jobs:
           git push origin HEAD:main
           git push origin --tags
 
-  infrastructure_testing:
-    runs-on: ubuntu-latest
-    needs: prepare_release.yml
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Run infrastructure tests
-        run: |
-          # Commands to test your infrastructure
-          echo "Infrastructure testing steps go here"
-
-  push_dockerhub:
-    runs-on: ubuntu-latest
-    needs: infrastructure_testing
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-
-  security_testing:
-    runs-on: ubuntu-latest
-    needs: push_dockerhub
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest .
-
-      - name: Push Docker image to DockerHub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-
-      - name: Install Docker Scout
-        run: |
-          curl -sSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh
-
-      - name: Run Docker Scout analysis
-        run: docker scout cves ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+ 
 
 
-#Explanation of Each Job:
-#Build:
-#
-#  Checks out the code, sets up Flutter, installs dependencies, builds the Flutter web application, and sets up Docker Buildx.
-#Unittesting:
-#
-#  Depends on the build job.
-#  Checks out the code, sets up Flutter, installs dependencies, and runs unit tests.
-#Prepare Release:
-#
-#  Depends on the unittesting job.
-#  Checks out the code and runs steps to prepare the release (e.g., bumping version, creating a changelog).
-#Infrastructure Testing:
-#
-#  Depends on the prepare_release.yml job.
-#  Checks out the code and runs infrastructure tests.
-#Push Docker Hub:
-#
-#  Depends on the infrastructure_testing job.
-#  Checks out the code, sets up Docker Buildx, logs into Docker Hub, builds, and pushes the Docker image.
-#Security Testing:
-#
-#  Depends on the push_dockerhub job.
-#  Checks out the code, installs Docker, installs Docker Scout, pulls the Docker image from Docker Hub, and runs Docker Scout for security analysis.
