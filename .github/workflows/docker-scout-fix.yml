@@ -1,47 +1,43 @@
-#name: CI for FlutterCommerce
-#
-#on:
-#  push:
-#    branches: [ develop, docker ]
-#  pull_request:
-#    branches: [ develop, main ]
-#
-#jobs:
-#  build_web:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Set up Flutter
-#        uses: subosito/flutter-action@v2
-#        with:
-#          flutter-version: '3.22.1'
-#
-#      - name: Install Dependencies
-#        run: flutter pub get
-#
-#      - name: Build Flutter Web
-#        run: flutter build web --release
-#
-#  test_web:
-#    runs-on: ubuntu-latest
-#    needs: build_web
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Set up Flutter
-#        uses: subosito/flutter-action@v2
-#        with:
-#          flutter-version: '3.22.1'
-#
-#      - name: Install Dependencies
-#        run: flutter pub get
-#
-#      - name: Run Unit Tests
-#        run: flutter test
-#
+name: CI for FlutterCommerce
+
+on:
+  push:
+    branches: [ develop, docker ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        run: flutter build web --release
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
+
+
+      - name: Save Docker image artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-image
+          path: image.tar
+
+
 #  build_android:
 #    runs-on: ubuntu-latest
 #    steps:
@@ -59,23 +55,13 @@
 #      - name: Build Android APK
 #        run: flutter build apk --release
 #
-#  test_android:
-#    runs-on: ubuntu-latest
-#    needs: build_android
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Set up Flutter
-#        uses: subosito/flutter-action@v2
+#      - name: Archive Android APK
+#        uses: actions/upload-artifact@v2
 #        with:
-#          flutter-version: '3.22.1'
+#          name: android-apk
+#          path: build/app/outputs/flutter-apk/app-release.apk
 #
-#      - name: Install Dependencies
-#        run: flutter pub get
 #
-#      - name: Run Unit Tests
-#        run: flutter test
 #
 #  build_ios:
 #    runs-on: macos-latest
@@ -94,23 +80,12 @@
 #      - name: Build iOS App
 #        run: flutter build ios --release --no-codesign
 #
-#  test_ios:
-#    runs-on: macos-latest
-#    needs: build_ios
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Set up Flutter
-#        uses: subosito/flutter-action@v2
+#      - name: Archive iOS App
+#        uses: actions/upload-artifact@v2
 #        with:
-#          flutter-version: '3.22.1'
+#          name: ios-app
+#          path: build/ios/Release-iphoneos/*.app
 #
-#      - name: Install Dependencies
-#        run: flutter pub get
-#
-#      - name: Run Unit Tests
-#        run: flutter test
 #
 #  build_windows:
 #    runs-on: windows-latest
@@ -129,9 +104,15 @@
 #      - name: Build Windows App
 #        run: flutter build windows --release
 #
-#  test_windows:
-#    runs-on: windows-latest
-#    needs: build_windows
+#      - name: Archive Windows App
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: windows-app
+#          path: build/windows/runner/Release
+#
+#  unittesting:
+#    runs-on: ubuntu-latest
+#    needs: build
 #    steps:
 #      - name: Checkout code
 #        uses: actions/checkout@v2
@@ -139,7 +120,7 @@
 #      - name: Set up Flutter
 #        uses: subosito/flutter-action@v2
 #        with:
-#          flutter-version: '3.22.1'
+#          flutter-version: '3.22.1' # Ensure this matches your pubspec.yaml version
 #
 #      - name: Install Dependencies
 #        run: flutter pub get
@@ -149,7 +130,7 @@
 #
 #  prepare_release:
 #    runs-on: ubuntu-latest
-#    needs: [test_web, test_android, test_ios, test_windows]
+#    needs: unittesting
 #    steps:
 #      - name: Checkout code
 #        uses: actions/checkout@v2
@@ -196,16 +177,42 @@
 #          platforms: linux/amd64,linux/arm64
 #          tags: |
 #            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+  security_testing:
+    runs-on: ubuntu-latest
+    needs: push_dockerhub
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Docker Scout
+        run: curl -sSL https://get.docker.com/ | sh
+
+      - name: Run Docker Scout analysis
+        run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+
+#Explanation of Each Job:
+#Build:
 #
-#  security_testing:
-#    runs-on: ubuntu-latest
-#    needs: push_dockerhub
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
+#  Checks out the code, sets up Flutter, installs dependencies, builds the Flutter web application, and sets up Docker Buildx.
+#Unittesting:
 #
-#      - name: Install Docker Scout
-#        run: curl -sSL https://get.docker.com/ | sh
+#  Depends on the build job.
+#  Checks out the code, sets up Flutter, installs dependencies, and runs unit tests.
+#Prepare Release:
 #
-#      - name: Run Docker Scout analysis
-#        run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+#  Depends on the unittesting job.
+#  Checks out the code and runs steps to prepare the release (e.g., bumping version, creating a changelog).
+#Infrastructure Testing:
+#
+#  Depends on the prepare_release job.
+#  Checks out the code and runs infrastructure tests.
+#Push Docker Hub:
+#
+#  Depends on the infrastructure_testing job.
+#  Checks out the code, sets up Docker Buildx, logs into Docker Hub, builds, and pushes the Docker image.
+#Security Testing:
+#
+#  Depends on the push_dockerhub job.
+#  Checks out the code, installs Docker, installs Docker Scout, pulls the Docker image from Docker Hub, and runs Docker Scout for security analysis.
