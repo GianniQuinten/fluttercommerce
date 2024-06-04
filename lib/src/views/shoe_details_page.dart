@@ -48,15 +48,15 @@ class ShoeDetailsPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Center(
-                                child:Text (
-                                  'Shoe Overview',
-                                  style: TextStyle(
-                                      fontSize: 24, fontWeight: FontWeight.bold),
-                                )
-                              ),
+                                  child: Text(
+                                'Shoe Overview',
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold),
+                              )),
                               SizedBox(height: 16),
                               Divider(
                                 color: Colors.black,
@@ -108,14 +108,40 @@ class ShoeDetailsPage extends StatelessWidget {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          width: 320,
-                          height: 320,
+                          constraints: BoxConstraints(maxHeight: 480), // Limit the height to 480
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(8.0),
-                            image: DecorationImage(
-                              image: NetworkImage(shoeImageURL),
-                              fit: BoxFit.cover,
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                offset: Offset(
+                                    0, 3), // give a shadow to the container
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            child: Container(
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  double maxWidth = constraints.maxWidth;
+                                  double maxHeight = constraints.maxHeight;
+                                  double aspectRatio = maxWidth / maxHeight;
+                                  return AspectRatio(
+                                    aspectRatio: aspectRatio,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage(shoeImageURL),
+                                          fit: BoxFit.contain, // Use BoxFit.contain to fit within the box
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
