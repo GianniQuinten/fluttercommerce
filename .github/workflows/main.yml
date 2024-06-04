@@ -139,7 +139,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: docker-image
-          path: .
+          path: image.tar
 
       - name: Load Docker image
         run: docker load -i image.tar
