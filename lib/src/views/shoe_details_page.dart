@@ -21,6 +21,10 @@ class ShoeDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double sizedBoxWidth =
+        screenWidth * 0.2; // The margin between the image and the shoeoverview
+
     return Scaffold(
       appBar: MyAppBar(title: 'JustShoes'),
       body: FutureBuilder(
@@ -36,117 +40,122 @@ class ShoeDetailsPage extends StatelessWidget {
               builder: (context, shoeProvider, child) {
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(100, 50, 100, 50),
-                  child: Row(
-                    children: [
-                      // Shoe Details
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          padding: EdgeInsets.all(30),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Center(
-                                  child: Text(
-                                'Shoe Overview',
-                                style: TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.bold),
-                              )),
-                              SizedBox(height: 16),
-                              Divider(
-                                color: Colors.black,
-                                thickness: 1,
-                              ),
-                              SizedBox(height: 16),
-                              _buildDetailRow('Name', shoeName),
-                              _buildDetailRow('Brand', shoeBrand),
-                              _buildDetailRow(
-                                  'Price', '\$${shoePrice.toStringAsFixed(2)}'),
-                              _buildDetailRow('Size', '[size placeholder]'),
-                              SizedBox(height: 16),
-                              Divider(
-                                color: Colors.black,
-                                thickness: 1,
-                              ),
-                              SizedBox(height: 16),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // Handle add to cart functionality
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: Color(0xFF246EB9),
-                                    // Text color & Background color
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          14), // Corner radius
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 16,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Add to cart',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
+                  child: SingleChildScrollView(
+                    child: Row(
+                      children: [
+                        // Shoe Details
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            padding: EdgeInsets.all(30),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                    child: Text(
+                                  'Shoe Overview',
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                                SizedBox(height: 16),
+                                Divider(
+                                  color: Colors.black,
+                                  thickness: 1,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 256),
-                      // Shoe Image
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          constraints: BoxConstraints(maxHeight: 480), // Limit the height to 480
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                spreadRadius: 1,
-                                blurRadius: 5,
-                                offset: Offset(
-                                    0, 3), // give a shadow to the container
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            child: Container(
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  double maxWidth = constraints.maxWidth;
-                                  double maxHeight = constraints.maxHeight;
-                                  double aspectRatio = maxWidth / maxHeight;
-                                  return AspectRatio(
-                                    aspectRatio: aspectRatio,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(shoeImageURL),
-                                          fit: BoxFit.contain, // Use BoxFit.contain to fit within the box
-                                        ),
+                                SizedBox(height: 16),
+                                _buildDetailRow('Name', shoeName),
+                                _buildDetailRow('Brand', shoeBrand),
+                                _buildDetailRow('Price',
+                                    '\$${shoePrice.toStringAsFixed(2)}'),
+                                _buildDetailRow('Size', '[size placeholder]'),
+                                SizedBox(height: 16),
+                                Divider(
+                                  color: Colors.black,
+                                  thickness: 1,
+                                ),
+                                SizedBox(height: 16),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      // Handle add to cart functionality
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: Color(0xFF246EB9),
+                                      // Text color & Background color
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            14), // Corner radius
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 16,
                                       ),
                                     ),
-                                  );
-                                },
+                                    child: Text(
+                                      'Add to cart',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: sizedBoxWidth),
+                        // Shoe Image
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            constraints: BoxConstraints(maxHeight: 480),
+                            // Limit the height to 480
+                            child: Container(
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 10,
+                                    spreadRadius: 2,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15.0),
+                                // Set border radius
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    double maxWidth = constraints.maxWidth;
+                                    double maxHeight = constraints.maxHeight;
+                                    double aspectRatio = maxWidth / maxHeight;
+                                    return AspectRatio(
+                                      aspectRatio: aspectRatio,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(shoeImageURL),
+                                            fit: BoxFit
+                                                .contain, // Use BoxFit.contain to fit within the box
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
@@ -167,9 +176,14 @@ class ShoeDetailsPage extends StatelessWidget {
             label,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+              ),
+            ),
           ),
         ],
       ),
