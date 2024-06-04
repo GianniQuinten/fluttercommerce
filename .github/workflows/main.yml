@@ -135,6 +135,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-image
+          path: .
+
+      - name: Load Docker image
+        run: docker load -i image.tar
+
       - name: Set up Git
         run: |
           git config user.name "github-actions"
@@ -142,11 +151,10 @@ jobs:
 
       - name: Bump Version and Generate Changelog
         run: |
-          pub global activate pubspec_bump
-          pubspec-bump patch # or minor/major as needed
-
-          # Generate changelog (example using conventional-changelog)
-          npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0
+          docker run --rm -v $(pwd):/workspace -w /workspace fluttercommerce:latest /bin/bash -c "
+          dart pub global activate pubspec_bump &&
+          dart pub global run pubspec_bump patch &&
+          npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0"
 
       - name: Commit and Tag
         run: |
