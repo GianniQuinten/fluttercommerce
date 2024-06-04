@@ -180,6 +180,7 @@ jobs:
 
   security_testing:
     runs-on: ubuntu-latest
+    needs: push_dockerhub
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -213,12 +214,6 @@ jobs:
 
       - name: Run Docker Scout analysis
         run: docker scout cves ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-
-#      - name: Install Docker Scout
-#        run: curl -sSL https://get.docker.com/ | sh
-#
-#      - name: Run Docker Scout analysis
-#        run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
 
 #Explanation of Each Job:
