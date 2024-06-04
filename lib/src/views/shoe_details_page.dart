@@ -24,7 +24,8 @@ class ShoeDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: MyAppBar(title: 'JustShoes'),
       body: FutureBuilder(
-        future: Provider.of<ShoeProvider>(context, listen: false).fetchShoeDetails(shoeId),
+        future: Provider.of<ShoeProvider>(context, listen: false)
+            .fetchShoeDetails(shoeId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -34,25 +35,91 @@ class ShoeDetailsPage extends StatelessWidget {
             return Consumer<ShoeProvider>(
               builder: (context, shoeProvider, child) {
                 return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  padding: const EdgeInsets.fromLTRB(100, 50, 100, 50),
+                  child: Row(
                     children: [
-                      SizedBox(
-                        width: 320,
-                        height: 320,
-                        child: Image.network(
-                          shoeImageURL,
-                          fit: BoxFit.cover,
+                      // Shoe Details
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: EdgeInsets.all(30),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child:Text (
+                                  'Shoe Overview',
+                                  style: TextStyle(
+                                      fontSize: 24, fontWeight: FontWeight.bold),
+                                )
+                              ),
+                              SizedBox(height: 16),
+                              Divider(
+                                color: Colors.black,
+                                thickness: 1,
+                              ),
+                              SizedBox(height: 16),
+                              _buildDetailRow('Name', shoeName),
+                              _buildDetailRow('Brand', shoeBrand),
+                              _buildDetailRow(
+                                  'Price', '\$${shoePrice.toStringAsFixed(2)}'),
+                              _buildDetailRow('Size', '[size placeholder]'),
+                              SizedBox(height: 16),
+                              Divider(
+                                color: Colors.black,
+                                thickness: 1,
+                              ),
+                              SizedBox(height: 16),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    // Handle add to cart functionality
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    backgroundColor: Color(0xFF246EB9),
+                                    // Text color & Background color
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                          14), // Corner radius
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 16,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Add to cart',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(height: 16),
-                      Text(
-                        shoeName,
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      SizedBox(width: 256),
+                      // Shoe Image
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          width: 320,
+                          height: 320,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(8.0),
+                            image: DecorationImage(
+                              image: NetworkImage(shoeImageURL),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                       ),
-                      Text(shoeBrand, style: TextStyle(fontSize: 20)),
-                      Text('\$${shoePrice}', style: TextStyle(fontSize: 20)),
                     ],
                   ),
                 );
@@ -60,6 +127,25 @@ class ShoeDetailsPage extends StatelessWidget {
             );
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          Text(
+            value,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+          ),
+        ],
       ),
     );
   }
