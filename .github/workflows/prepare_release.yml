@@ -30,6 +30,15 @@ jobs:
       - name: Build Docker image
         run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
 
+      - name: Verify Docker image
+        run: |
+          if [ -f image.tar ]; then
+            echo "Docker image created successfully."
+          else
+            echo "Docker image not found!"
+            exit 1
+          fi
+
       - name: Save Docker image artifact
         uses: actions/upload-artifact@v2
         with:
@@ -50,7 +59,14 @@ jobs:
           path: .
 
       - name: Verify downloaded artifact
-        run: ls -lah image.tar
+        run: |
+          if [ -f image.tar ]; then
+            echo "Docker image downloaded successfully."
+            ls -lah image.tar
+          else
+            echo "Docker image artifact not found!"
+            exit 1
+          fi
 
       - name: Load Docker image
         run: docker load -i image.tar
