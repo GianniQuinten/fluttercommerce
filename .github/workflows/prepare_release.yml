@@ -30,14 +30,11 @@ jobs:
       - name: Build Docker image
         run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
 
-
       - name: Save Docker image artifact
         uses: actions/upload-artifact@v2
         with:
           name: docker-image
           path: image.tar
-
-
 
   prepare_release:
     runs-on: ubuntu-latest
@@ -50,7 +47,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: docker-image
-          path: image.tar
+          path: .
+
+      - name: Verify downloaded artifact
+        run: ls -lah image.tar
 
       - name: Load Docker image
         run: docker load -i image.tar
@@ -78,7 +78,3 @@ jobs:
         run: |
           git push origin HEAD:main
           git push origin --tags
-
- 
-
-

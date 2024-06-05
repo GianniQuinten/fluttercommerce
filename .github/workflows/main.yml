@@ -125,15 +125,18 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Create Test Reports Directory
+        run: mkdir -p test-reports
+
       - name: Run Unit Tests
-        run: mkdir -p test-reports                      
-             flutter test --machine > test-reports/results.json
+        run: flutter test --machine > test-reports/results.json
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v2
         with:
           name: test-results
           path: test-reports/results.json
+
 
   prepare_release:
     runs-on: ubuntu-latest
