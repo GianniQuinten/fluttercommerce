@@ -7,6 +7,12 @@ import '../providers/shoe_provider.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Get the screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Determine the left and right padding based on the screen width
+    double horizontalPadding = screenWidth < 825 ? 5.0 : 50.0;
+
     return Scaffold(
       appBar: MyAppBar(title: 'JustShoes'),
       body: Padding(
@@ -14,7 +20,7 @@ class HomePage extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             double width = constraints.maxWidth;
-            int crossAxisCount = width > 800 ? 2 : 1; // Change number of columns (images) based on width
+            int crossAxisCount = width > 825 ? 2 : 1; // Change number of columns (images) based on width
             return Row(
               children: [
                 Expanded(
@@ -73,48 +79,85 @@ class HomePage extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: Padding(
-                    padding: const EdgeInsets.all(50),
+                    // Use responsive padding
+                    padding: EdgeInsets.fromLTRB(
+                        horizontalPadding, 25, horizontalPadding, 25),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
-                            child: Text(
-                          'Welcome to the JustShoes Store!',
-                          style: TextStyle(
-                              fontSize: 32, fontWeight: FontWeight.w600),
-                        )),
-                        SizedBox(height: 50),
-                        Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                          style: TextStyle(fontSize: 16),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              // Calculate font size based on the available width
+                              double fontSize = constraints.maxWidth * 0.05;
+                              fontSize = fontSize.clamp(18.0, 32.0); // Clamp within the range
+                              return Text(
+                                'Welcome to the JustShoes Store!',
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.center,
+                              );
+                            },
+                          ),
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                          style: TextStyle(fontSize: 16),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            // Calculate spacing based on the available width
+                            double sizedBoxHeight = constraints.maxWidth * 0.05;
+                            sizedBoxHeight = sizedBoxHeight.clamp(20.0, 50.0); // Clamp within the range
+                            return SizedBox(height: sizedBoxHeight);
+                          },
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                          style: TextStyle(fontSize: 16),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            // Calculate font size based on the available width
+                            double paragraphFontSize =
+                                constraints.maxWidth * 0.02;
+                            paragraphFontSize = paragraphFontSize.clamp(12.0, 18.0); // Clamp within the range
+                            return Text(
+                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                              ' Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+                              ' Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+                              style: TextStyle(fontSize: paragraphFontSize),
+                            );
+                          },
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                          style: TextStyle(fontSize: 16),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            // Calculate spacing based on the available width
+                            double sizedBoxHeight = constraints.maxWidth * 0.02;
+                            sizedBoxHeight = sizedBoxHeight.clamp(5.0, 20.0); // Clamp within the range
+                            return SizedBox(height: sizedBoxHeight);
+                          },
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                          style: TextStyle(fontSize: 16),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            // Calculate font size based on the available width
+                            double paragraphFontSize = constraints.maxWidth * 0.02;
+                            paragraphFontSize = paragraphFontSize.clamp(12.0, 18.0); // Clamp within the range
+                            return Text(
+                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                              ' Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+                              ' Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+                              style: TextStyle(
+                                fontSize: paragraphFontSize,
+                              ),
+                              maxLines: 6,
+                              overflow: TextOverflow.ellipsis,
+                            );
+                          },
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                          style: TextStyle(fontSize: 16),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            // Calculate spacing based on the available width
+                            double sizedBoxHeight = constraints.maxWidth * 0.03;
+                            sizedBoxHeight = sizedBoxHeight.clamp(20.0, 30.0); // Clamp within the range
+                            return SizedBox(height: sizedBoxHeight);
+                          },
                         ),
-                        SizedBox(height: 30),
                         Center(
                           child: ElevatedButton(
                             onPressed: () {
@@ -130,8 +173,7 @@ class HomePage extends StatelessWidget {
                               backgroundColor: Color(0xFF246EB9),
                               // Text color & Background color
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(14), // Corner radius
+                                borderRadius: BorderRadius.circular(14), // Corner radius
                               ),
                               padding: EdgeInsets.symmetric(
                                 horizontal: 16,
