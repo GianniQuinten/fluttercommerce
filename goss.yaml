@@ -1,6 +1,7 @@
-file:
-  /etc/myapp/config.yaml:
-    exists: true
-port:
-  tcp:80:
-    listening: true
+http:
+  check80:
+    url: http://localhost/
+    status: 200
+    timeout: 500
+    body:
+      - "RAM OK ROM OK"
