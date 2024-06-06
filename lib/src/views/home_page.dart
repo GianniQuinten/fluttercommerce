@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercommerce/src/views/shoe_overview_page.dart';
 import 'package:provider/provider.dart';
 import '../widget/app_bar.dart';
 import '../providers/shoe_provider.dart';
@@ -113,7 +114,12 @@ class HomePage extends StatelessWidget {
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          // Method to navigate to shoes overview
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ShoeOverviewPage(),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
