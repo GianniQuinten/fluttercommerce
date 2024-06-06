@@ -89,10 +89,17 @@ jobs:
           sudo chmod 0755 /tmp/goss_test_file
           sudo chown root:root /tmp/goss_test_file
 
+      - name: Debug File Information
+        run: |
+          echo "Debugging file information"
+          ls -l /tmp/goss_test_file
+          stat /tmp/goss_test_file
+
       - name: Run Goss Tests
         run: |
           echo "Running Goss tests"
           goss -g /tmp/goss-tests/goss.yaml validate --format json > /tmp/goss-tests/goss-outputs.json
+          cat /tmp/goss-tests/goss-outputs.json
 
       - name: Collect Test Reports
         run: |
@@ -105,3 +112,4 @@ jobs:
         with:
           name: infrastructure-test-results
           path: test-reports
+
