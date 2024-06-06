@@ -118,14 +118,6 @@ class ShoeDetailsPage extends StatelessWidget {
                             // Limit the height to 480
                             child: Container(
                               decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 10,
-                                    spreadRadius: 2,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
                               child: ClipRRect(
