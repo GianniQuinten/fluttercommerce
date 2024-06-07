@@ -1,8 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:io' show Platform;
 
 class SneaksApiService {
-  static const baseUrl = 'http://localhost:4000';
+  static String get baseUrl {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return 'http://10.0.2.2:4000'; // For both Android and iOS use 10.0.2.2
+    } else {
+      return 'http://localhost:4000'; // For other platforms use localhost
+    }
+  }
 
   Future<List<dynamic>> fetchProducts(String keyword, int limit) async {
     final response = await http.get(Uri.parse('$baseUrl/search/$keyword?count=$limit'));
