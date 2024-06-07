@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercommerce/src/views/shoe_overview_page.dart';
 import 'package:provider/provider.dart';
@@ -11,12 +12,14 @@ class HomePage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
 
     // Determine the left and right padding based on the screen width
-    double horizontalPadding = screenWidth < 825 ? 5.0 : 50.0;
+    double screenPadding = defaultTargetPlatform == TargetPlatform.android ? 20 : 50;
+    double textPadding = defaultTargetPlatform == TargetPlatform.android ? 10 : 25;
+    double buttonPadding = defaultTargetPlatform == TargetPlatform.android ? 8 : 16;
 
     return Scaffold(
       appBar: MyAppBar(title: 'JustShoes'),
       body: Padding(
-        padding: const EdgeInsets.all(50),
+        padding: EdgeInsets.all(screenPadding),
         child: LayoutBuilder(
           builder: (context, constraints) {
             double width = constraints.maxWidth;
@@ -41,7 +44,7 @@ class HomePage extends StatelessWidget {
                           crossAxisCount: crossAxisCount,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
-                          childAspectRatio: 1.5, // Height of the images
+                          childAspectRatio: 1.25, // Height of the images
                         ),
                         itemCount: 4, // Only show 4 images
                         itemBuilder: (context, index) {
@@ -75,13 +78,15 @@ class HomePage extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(width: 30),
+                SizedBox(
+                  width: defaultTargetPlatform == TargetPlatform.android ? 0 : 30,
+                ),
                 Expanded(
                   flex: 1,
                   child: Padding(
                     // Use responsive padding
                     padding: EdgeInsets.fromLTRB(
-                        horizontalPadding, 25, horizontalPadding, 25),
+                        textPadding, 25, textPadding, 25),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,7 +96,7 @@ class HomePage extends StatelessWidget {
                             builder: (context, constraints) {
                               // Calculate font size based on the available width
                               double fontSize = constraints.maxWidth * 0.05;
-                              fontSize = fontSize.clamp(18.0, 32.0); // Clamp within the range
+                              fontSize = fontSize.clamp(16.0, 32.0); // Clamp within the range
                               return Text(
                                 'Welcome to the JustShoes Store!',
                                 style: TextStyle(
@@ -122,6 +127,8 @@ class HomePage extends StatelessWidget {
                               ' Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
                               ' Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
                               style: TextStyle(fontSize: paragraphFontSize),
+                              maxLines: 8,
+                              overflow: TextOverflow.ellipsis,
                             );
                           },
                         ),
@@ -145,7 +152,7 @@ class HomePage extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: paragraphFontSize,
                               ),
-                              maxLines: 6,
+                              maxLines: 8,
                               overflow: TextOverflow.ellipsis,
                             );
                           },
@@ -173,11 +180,11 @@ class HomePage extends StatelessWidget {
                               backgroundColor: Color(0xFF246EB9),
                               // Text color & Background color
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14), // Corner radius
+                                borderRadius: BorderRadius.circular(15), // Corner radius
                               ),
                               padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
+                                horizontal: buttonPadding,
+                                vertical: buttonPadding,
                               ),
                             ),
                             child: Text(
