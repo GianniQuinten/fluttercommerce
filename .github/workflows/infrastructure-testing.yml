@@ -104,7 +104,8 @@ jobs:
       - name: Run Goss Tests
         run: |
           echo "Running Goss tests"
-          goss -g /tmp/goss-tests/goss.yaml validate --format json > /tmp/goss-tests/goss-outputs.json
+          goss -g /tmp/goss-tests/goss.yaml validate --format json > /tmp/goss-tests/goss-outputs.json || true
+          echo "Goss test output:"
           cat /tmp/goss-tests/goss-outputs.json || true
 
       - name: Check Goss Test Output
