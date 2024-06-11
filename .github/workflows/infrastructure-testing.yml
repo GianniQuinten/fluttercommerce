@@ -63,6 +63,12 @@ jobs:
           echo "Installing Goss"
           curl -fsSL https://goss.rocks/install | sh
 
+      - name: Verify Goss Installation
+        run: |
+          echo "Verifying Goss installation"
+          which goss
+          goss --version
+
       - name: Create Basic Goss Test
         run: |
           echo "Creating basic Goss test"
@@ -101,6 +107,12 @@ jobs:
           goss -g /tmp/goss-tests/goss.yaml validate --format json > /tmp/goss-tests/goss-outputs.json
           cat /tmp/goss-tests/goss-outputs.json
 
+      - name: Check Goss Test Output
+        run: |
+          echo "Checking Goss test output"
+          cat /tmp/goss-tests/goss-outputs.json
+          jq .summary /tmp/goss-tests/goss-outputs.json
+
       - name: Collect Test Reports
         run: |
           echo "Collecting test reports"
@@ -112,4 +124,3 @@ jobs:
         with:
           name: infrastructure-test-results
           path: test-reports
-
