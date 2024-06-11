@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../widget/app_bar.dart';
 import 'package:provider/provider.dart';
@@ -22,10 +23,21 @@ class ShoeOverviewPage extends StatelessWidget {
           return LayoutBuilder(
             builder: (context, constraints) {
               double width = constraints.maxWidth;
+
+              // Calculate the cross axis count based on the available width
               int crossAxisCount = width > 1200 ? 4 : width > 800 ? 3 : 2;
+
+              double maxItemHeight;
+              if(defaultTargetPlatform != TargetPlatform.android) {
+                maxItemHeight = crossAxisCount == 4 ? 320 : crossAxisCount == 3 ? 265 : 267.5;
+              } else {
+                maxItemHeight = 190;
+              }
+
               double itemWidth = (width - (crossAxisCount - 1) * 25) / crossAxisCount;
-              double itemHeight = crossAxisCount == 4 ? itemWidth / 1.3 : crossAxisCount == 3 ? itemWidth / 1.225 : itemWidth / 1.175;
-              double aspectRatio = itemWidth / itemHeight;
+
+              // Calculate the aspect ratio based on the max item height
+              double aspectRatio = itemWidth / maxItemHeight;
 
               return GridView.builder(
                 padding: const EdgeInsets.all(25),
@@ -44,11 +56,11 @@ class ShoeOverviewPage extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ShoeDetailsPage(
-                              shoeId: shoe.id,
-                              shoeName: shoe.name,
-                              shoeBrand: shoe.brand,
-                              shoeImageURL: shoe.imageUrl,
-                              shoePrice: shoe.price,
+                            shoeId: shoe.id,
+                            shoeName: shoe.name,
+                            shoeBrand: shoe.brand,
+                            shoeImageURL: shoe.imageUrl,
+                            shoePrice: shoe.price,
                           ),
                         ),
                       );
@@ -62,7 +74,7 @@ class ShoeOverviewPage extends StatelessWidget {
                             color: Colors.black.withOpacity(0.1),
                             spreadRadius: 1,
                             blurRadius: 5,
-                            offset: Offset(0, 3), // give a shadow to the container
+                            offset: Offset(0, 3), // Give a shadow to the container
                           ),
                         ],
                       ),
