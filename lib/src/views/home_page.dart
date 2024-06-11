@@ -85,115 +85,115 @@ class HomePage extends StatelessWidget {
                   flex: 1,
                   child: Padding(
                     // Use responsive padding
-                    padding: EdgeInsets.fromLTRB(
-                        textPadding, 25, textPadding, 25),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: LayoutBuilder(
+                    padding: EdgeInsets.fromLTRB(textPadding, 25, textPadding, 25),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                // Calculate font size based on the available width
+                                double fontSize = constraints.maxWidth * 0.05;
+                                fontSize = fontSize.clamp(16.0, 32.0); // Clamp within the range
+                                return Text(
+                                  'Welcome to the JustShoes Store!',
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                );
+                              },
+                            ),
+                          ),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              // Calculate spacing based on the available width
+                              double sizedBoxHeight = constraints.maxWidth * 0.05;
+                              sizedBoxHeight = sizedBoxHeight.clamp(20.0, 50.0); // Clamp within the range
+                              return SizedBox(height: sizedBoxHeight);
+                            },
+                          ),
+                          LayoutBuilder(
                             builder: (context, constraints) {
                               // Calculate font size based on the available width
-                              double fontSize = constraints.maxWidth * 0.05;
-                              fontSize = fontSize.clamp(16.0, 32.0); // Clamp within the range
+                              double paragraphFontSize = constraints.maxWidth * 0.02;
+                              paragraphFontSize = paragraphFontSize.clamp(12.0, 18.0); // Clamp within the range
                               return Text(
-                                'Welcome to the JustShoes Store!',
+                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                                    ' Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+                                    ' Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
+                                style: TextStyle(fontSize: paragraphFontSize),
+                                maxLines: 8,
+                                overflow: TextOverflow.ellipsis,
+                              );
+                            },
+                          ),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              // Calculate spacing based on the available width
+                              double sizedBoxHeight = constraints.maxWidth * 0.02;
+                              sizedBoxHeight = sizedBoxHeight.clamp(5.0, 20.0); // Clamp within the range
+                              return SizedBox(height: sizedBoxHeight);
+                            },
+                          ),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              // Calculate font size based on the available width
+                              double paragraphFontSize = constraints.maxWidth * 0.02;
+                              paragraphFontSize = paragraphFontSize.clamp(12.0, 18.0); // Clamp within the range
+                              return Text(
+                                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                                    ' Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+                                    ' Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
                                 style: TextStyle(
-                                  fontSize: fontSize,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: paragraphFontSize,
                                 ),
-                                textAlign: TextAlign.center,
+                                maxLines: 8,
+                                overflow: TextOverflow.ellipsis,
                               );
                             },
                           ),
-                        ),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            // Calculate spacing based on the available width
-                            double sizedBoxHeight = constraints.maxWidth * 0.05;
-                            sizedBoxHeight = sizedBoxHeight.clamp(20.0, 50.0); // Clamp within the range
-                            return SizedBox(height: sizedBoxHeight);
-                          },
-                        ),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            // Calculate font size based on the available width
-                            double paragraphFontSize =
-                                constraints.maxWidth * 0.02;
-                            paragraphFontSize = paragraphFontSize.clamp(12.0, 18.0); // Clamp within the range
-                            return Text(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                              ' Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-                              ' Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                              style: TextStyle(fontSize: paragraphFontSize),
-                              maxLines: 8,
-                              overflow: TextOverflow.ellipsis,
-                            );
-                          },
-                        ),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            // Calculate spacing based on the available width
-                            double sizedBoxHeight = constraints.maxWidth * 0.02;
-                            sizedBoxHeight = sizedBoxHeight.clamp(5.0, 20.0); // Clamp within the range
-                            return SizedBox(height: sizedBoxHeight);
-                          },
-                        ),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            // Calculate font size based on the available width
-                            double paragraphFontSize = constraints.maxWidth * 0.02;
-                            paragraphFontSize = paragraphFontSize.clamp(12.0, 18.0); // Clamp within the range
-                            return Text(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                              ' Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-                              ' Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                              style: TextStyle(
-                                fontSize: paragraphFontSize,
-                              ),
-                              maxLines: 8,
-                              overflow: TextOverflow.ellipsis,
-                            );
-                          },
-                        ),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            // Calculate spacing based on the available width
-                            double sizedBoxHeight = constraints.maxWidth * 0.03;
-                            sizedBoxHeight = sizedBoxHeight.clamp(20.0, 30.0); // Clamp within the range
-                            return SizedBox(height: sizedBoxHeight);
-                          },
-                        ),
-                        Center(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ShoeOverviewPage(),
-                                ),
-                              );
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              // Calculate spacing based on the available width
+                              double sizedBoxHeight = constraints.maxWidth * 0.03;
+                              sizedBoxHeight = sizedBoxHeight.clamp(20.0, 30.0); // Clamp within the range
+                              return SizedBox(height: sizedBoxHeight);
                             },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Color(0xFF246EB9),
-                              // Text color & Background color
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15), // Corner radius
+                          ),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ShoeOverviewPage(),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Color(0xFF246EB9),
+                                // Text color & Background color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15), // Corner radius
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: buttonPadding,
+                                  vertical: buttonPadding,
+                                ),
                               ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: buttonPadding,
-                                vertical: buttonPadding,
+                              child: Text(
+                                'Explore more',
+                                style: TextStyle(fontSize: 16),
                               ),
-                            ),
-                            child: Text(
-                              'Explore more',
-                              style: TextStyle(fontSize: 16),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

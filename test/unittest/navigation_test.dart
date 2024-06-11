@@ -9,13 +9,10 @@ import 'package:provider/provider.dart';
 import 'shoe_overview_test.dart';
 
 void main() {
-  testWidgets('MyAppBar navigates to the correct pages', (WidgetTester tester) async {
-    final mockApiService = MockSneaksApiService();
+  final mockApiService = MockSneaksApiService();
+  final shoeProvider = ShoeProvider(apiService: mockApiService);
 
-    // Define the providers required for the test
-    final shoeProvider = ShoeProvider(apiService: mockApiService);
-
-    // Create a test widget with the MyAppBar wrapped in the necessary providers
+  Future<void> setupWidget(WidgetTester tester) async {
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -28,40 +25,37 @@ void main() {
         ),
       ),
     );
+  }
 
-    // Verify if the Home button navigates to HomePage
-    await tester.tap(find.text('Home'));
-    await tester.pumpAndSettle();
-    expect(find.byType(HomePage), findsOneWidget);
-    print('Navigating to Home');
+  group('MyAppBar Navigation Tests', () {
+    testWidgets('Navigate to HomePage', (WidgetTester tester) async {
+      await setupWidget(tester);
 
-    await tester.pump(const Duration(seconds: 1));  // Add a 1-second pause
+      // Tap on Home and check navigation
+      await tester.tap(find.text('Home'));
+      await tester.pumpAndSettle();
+      expect(find.byType(HomePage), findsOneWidget);
+      print('Navigating to Home');
+    });
 
-    // Navigate back to the initial screen
-    await tester.tap(find.byTooltip('Back'));
-    await tester.pumpAndSettle();
+    testWidgets('Navigate to ShoeOverviewPage', (WidgetTester tester) async {
+      await setupWidget(tester);
 
-    await tester.pump(const Duration(seconds: 1));  // Add a 1-second pause
+      // Tap on Shoes and check navigation
+      await tester.tap(find.text('Shoes'));
+      await tester.pumpAndSettle();
+      expect(find.byType(ShoeOverviewPage), findsOneWidget);
+      print('Navigating to Shoes');
+    });
 
-    // Verify if the Shoes button navigates to ShoeOverviewPage
-    await tester.tap(find.text('Shoes'));
-    await tester.pumpAndSettle();
-    expect(find.byType(ShoeOverviewPage), findsOneWidget);
-    print('Navigating to Shoes');
+    testWidgets('Navigate to ContactPage', (WidgetTester tester) async {
+      await setupWidget(tester);
 
-    await tester.pump(const Duration(seconds: 1));  // Add a 1-second pause
-
-    // Navigate back to the initial screen
-    await tester.tap(find.byTooltip('Back'));
-    await tester.pumpAndSettle();
-
-    await tester.pump(const Duration(seconds: 1));  // Add a 1-second pause
-
-    // Verify if the Contact button navigates to ShoeOverviewPage
-    // Since ContactPage is not implemented, we check ShoeOverviewPage again
-    await tester.tap(find.text('Contact'));
-    await tester.pumpAndSettle();
-    expect(find.byType(ContactPage), findsOneWidget);
-    print('Navigating to Contact');
+      // Tap on Contact and check navigation
+      await tester.tap(find.text('Contact'));
+      await tester.pumpAndSettle();
+      expect(find.byType(ContactPage), findsOneWidget);
+      print('Navigating to Contact');
+    });
   });
 }
