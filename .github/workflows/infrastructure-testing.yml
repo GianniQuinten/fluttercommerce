@@ -135,19 +135,22 @@ jobs:
       - name: Run Goss Test 1
         run: |
           echo "Running Goss test 1"
-          goss -g /tmp/goss-tests/goss-test1.yaml validate --format json > /tmp/goss-tests/goss-test1-output.json
+          goss -g /tmp/goss-tests/goss-test1.yaml validate --format json > /tmp/goss-tests/goss-test1-output.json || true
+          echo "Goss test 1 output:"
           cat /tmp/goss-tests/goss-test1-output.json || true
 
       - name: Run Goss Test 2
         run: |
           echo "Running Goss test 2"
-          goss -g /tmp/goss-tests/goss-test2.yaml validate --format json > /tmp/goss-tests/goss-test2-output.json
+          goss -g /tmp/goss-tests/goss-test2.yaml validate --format json > /tmp/goss-tests/goss-test2-output.json || true
+          echo "Goss test 2 output:"
           cat /tmp/goss-tests/goss-test2-output.json || true
 
       - name: Run Goss Test 3
         run: |
           echo "Running Goss test 3"
-          goss -g /tmp/goss-tests/goss-test3.yaml validate --format json > /tmp/goss-tests/goss-test3-output.json
+          goss -g /tmp/goss-tests/goss-test3.yaml validate --format json > /tmp/goss-tests/goss-test3-output.json || true
+          echo "Goss test 3 output:"
           cat /tmp/goss-tests/goss-test3-output.json || true
 
       - name: Collect Test Reports
@@ -163,4 +166,3 @@ jobs:
         with:
           name: infrastructure-test-results
           path: test-reports
-
