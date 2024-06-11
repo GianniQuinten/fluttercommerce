@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttercommerce/src/views/contact_page.dart';
 import 'package:fluttercommerce/src/views/shoe_overview_page.dart';
 import 'package:provider/provider.dart';
 import 'src/providers/shoe_provider.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: ShoeOverviewPage(),
+        home: HomePage(),
       ),
     );
   }
