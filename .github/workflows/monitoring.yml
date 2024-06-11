@@ -1,4 +1,4 @@
-name: CI for FlutterCommerce
+name: CI for monitoring
 
 on:
   push:
