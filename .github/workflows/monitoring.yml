@@ -7,21 +7,11 @@ on:
     branches: [develop, main]
 
 jobs:
-  build_and_test:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform: [ web, android, ios, windows ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.pub-cache
-          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
-          restore-keys: ${{ runner.os }}-flutter-
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -31,29 +21,89 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Build Flutter ${{ matrix.platform }}
-        run: |
-          if [ ${{ matrix.platform }} == "web" ]; then
-            flutter build web --release
-          elif [ ${{ matrix.platform }} == "android" ]; then
-            flutter build apk --release
-          elif [ ${{ matrix.platform }} == "ios" ]; then
-            flutter build ios --release --no-codesign
-          elif [ ${{ matrix.platform }} == "windows" ]; then
-            flutter build windows --release
-          fi
-        env:
-          CI: true
+      - name: Build Flutter Web
+        run: flutter build web --release
 
-      - name: Archive Build Artifact
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
+
+      - name: Save Docker image artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.platform }}-build
-          path: |
-            ${{ matrix.platform == 'web' && 'build/web' || '' }}
-            ${{ matrix.platform == 'android' && 'build/app/outputs/flutter-apk/app-release.apk' || '' }}
-            ${{ matrix.platform == 'ios' && 'build/ios/Release-iphoneos/*.app' || '' }}
-            ${{ matrix.platform == 'windows' && 'build/windows/runner/Release' || '' }}
+          name: docker-image
+          path: image.tar
+
+    build_android:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Set up Flutter
+          uses: subosito/flutter-action@v2
+          with:
+            flutter-version: '3.22.1'
+
+        - name: Install Dependencies
+          run: flutter pub get
+
+        - name: Build Android APK
+          run: flutter build apk --release
+
+        - name: Archive Android APK
+          uses: actions/upload-artifact@v2
+          with:
+            name: android-apk
+            path: build/app/outputs/flutter-apk/app-release.apk
+
+    build_ios:
+      runs-on: macos-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Set up Flutter
+          uses: subosito/flutter-action@v2
+          with:
+            flutter-version: '3.22.1'
+
+        - name: Install Dependencies
+          run: flutter pub get
+
+        - name: Build iOS App
+          run: flutter build ios --release --no-codesign
+
+        - name: Archive iOS App
+          uses: actions/upload-artifact@v2
+          with:
+            name: ios-app
+            path: build/ios/Release-iphoneos/*.app
+
+    build_windows:
+      runs-on: windows-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Set up Flutter
+          uses: subosito/flutter-action@v2
+          with:
+            flutter-version: '3.22.1'
+
+        - name: Install Dependencies
+          run: flutter pub get
+
+        - name: Build Windows App
+          run: flutter build windows --release
+
+        - name: Archive Windows App
+          uses: actions/upload-artifact@v2
+          with:
+            name: windows-app
+            path: build/windows/runner/Release
 
   unit_tests:
     runs-on: ubuntu-latest
