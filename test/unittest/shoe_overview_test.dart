@@ -60,3 +60,4 @@ void main() {
     expect(find.byType(GestureDetector).evaluate().length, greaterThanOrEqualTo(8));
   });
 }
+
