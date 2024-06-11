@@ -105,13 +105,13 @@ jobs:
         run: |
           echo "Running Goss tests"
           goss -g /tmp/goss-tests/goss.yaml validate --format json > /tmp/goss-tests/goss-outputs.json
-          cat /tmp/goss-tests/goss-outputs.json
+          cat /tmp/goss-tests/goss-outputs.json || true
 
       - name: Check Goss Test Output
         run: |
           echo "Checking Goss test output"
           cat /tmp/goss-tests/goss-outputs.json
-          jq .summary /tmp/goss-tests/goss-outputs.json
+          jq .summary /tmp/goss-tests/goss-outputs.json || true
 
       - name: Collect Test Reports
         run: |
