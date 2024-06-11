@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [web, android, ios, windows]
+        platform: [ web, android, ios, windows ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -42,6 +42,8 @@ jobs:
           elif [ ${{ matrix.platform }} == "windows" ]; then
             flutter build windows --release
           fi
+        env:
+          CI: true
 
       - name: Archive Build Artifact
         uses: actions/upload-artifact@v2
