@@ -1,0 +1,153 @@
+name: CI for FlutterCommerce
+
+on:
+  push:
+    branches: [develop, docker]
+  pull_request:
+    branches: [develop, main]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [web, android, ios, windows]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-flutter-
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Flutter ${{ matrix.platform }}
+        run: |
+          if [ ${{ matrix.platform }} == "web" ]; then
+            flutter build web --release
+          elif [ ${{ matrix.platform }} == "android" ]; then
+            flutter build apk --release
+          elif [ ${{ matrix.platform }} == "ios" ]; then
+            flutter build ios --release --no-codesign
+          elif [ ${{ matrix.platform }} == "windows" ]; then
+            flutter build windows --release
+          fi
+
+      - name: Archive Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.platform }}-build
+          path: |
+            ${{ matrix.platform == 'web' && 'build/web' || '' }}
+            ${{ matrix.platform == 'android' && 'build/app/outputs/flutter-apk/app-release.apk' || '' }}
+            ${{ matrix.platform == 'ios' && 'build/ios/Release-iphoneos/*.app' || '' }}
+            ${{ matrix.platform == 'windows' && 'build/windows/runner/Release' || '' }}
+
+  unit_tests:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-flutter-
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Run Unit Tests
+        run: flutter test
+
+  docker_build_and_push:
+    runs-on: ubuntu-latest
+    needs: unit_tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.ref_name }}
+            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+  deploy_to_minikube:
+    runs-on: ubuntu-latest
+    needs: docker_build_and_push
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Minikube
+        uses: manusa/actions-setup-minikube@v2
+        with:
+          minikube version: 'latest'
+          kubernetes version: 'latest'
+          driver: 'docker'
+
+      - name: Configure kubectl
+        run: |
+          minikube kubectl -- get pods
+
+      - name: Deploy to Minikube
+        run: |
+          kubectl apply -f k8s/k8s-deployment.yaml
+          kubectl set image deployment/fluttercommerce-deployment fluttercommerce=${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+      - name: Verify Deployment
+        run: |
+          kubectl rollout status deployment/fluttercommerce-deployment
+          kubectl get pods -l app=fluttercommerce
+
+  setup_monitoring:
+    runs-on: ubuntu-latest
+    needs: deploy_to_minikube
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy Monitoring Stack
+        run: |
+          kubectl apply -f k8s/monitoring.yaml
+
+      - name: Wait for Grafana
+        run: |
+          kubectl rollout status deployment/grafana -n monitoring
+          kubectl port-forward -n monitoring service/grafana 3000:3000 &
+
+      - name: Test Grafana Setup
+        run: |
+          curl -s http://localhost:3000/api/health | grep '"database": "ok"'
