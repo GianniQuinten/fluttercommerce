@@ -114,7 +114,7 @@ packages:
     source: hosted
     version: "3.0.3"
   cupertino_icons:
-    dependency: "direct main"
+    dependency: "direct main.yml"
     description:
       name: cupertino_icons
       sha256: ba631d1c7f7bef6b729a622b7b752645a2d076dba9976925b8f25725a30e1ee6
@@ -154,7 +154,7 @@ packages:
     source: hosted
     version: "1.1.0"
   flutter:
-    dependency: "direct main"
+    dependency: "direct main.yml"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -182,7 +182,7 @@ packages:
     source: hosted
     version: "2.1.2"
   http:
-    dependency: "direct main"
+    dependency: "direct main.yml"
     description:
       name: http
       sha256: "761a297c042deedc1ffbb156d6e2af13886bb305c2a343a4d972504cd67dd938"
@@ -254,7 +254,7 @@ packages:
     source: hosted
     version: "1.12.0"
   mockito:
-    dependency: "direct main"
+    dependency: "direct main.yml"
     description:
       name: mockito
       sha256: "6841eed20a7befac0ce07df8116c8b8233ed1f4486a7647c7fc5a02ae6163917"
@@ -302,7 +302,7 @@ packages:
     source: hosted
     version: "5.0.2"
   prometheus_client:
-    dependency: "direct main"
+    dependency: "direct main.yml"
     description:
       name: prometheus_client
       sha256: "994b731e5b35f4666f50e804bc88a32f55ddcbc6dd2db707f4b8b3374c38f115"
@@ -310,7 +310,7 @@ packages:
     source: hosted
     version: "1.0.0+1"
   provider:
-    dependency: "direct main"
+    dependency: "direct main.yml"
     description:
       name: provider
       sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
@@ -427,7 +427,7 @@ packages:
     source: hosted
     version: "1.1.0"
   web:
-    dependency: "direct main"
+    dependency: "direct main.yml"
     description:
       name: web
       sha256: "97da13628db363c635202ad97068d47c5b8aa555808e7a9411963c533b449b27"
