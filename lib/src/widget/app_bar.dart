@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttercommerce/src/views/contact_page.dart';
+import 'package:fluttercommerce/src/views/shopping_cart_page.dart';
 import '../views/home_page.dart';
 import '../views/shoe_overview_page.dart';
 
@@ -81,15 +82,23 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
               icon: const Icon(Icons.shopping_cart, color: Color(0xFF246EB9)),
               // Change icon color to custom blue color
               onPressed: () {
-                // Navigate to the cart page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ShoppingCartPage(), // Navigate to the cart page
+                  ),
+                );
               },
             ),
           ),
         ],
-        shape: defaultTargetPlatform != TargetPlatform.android ? RoundedRectangleBorder(
+        shape: defaultTargetPlatform != TargetPlatform.android
+            ? RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
-              ) : RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
+              )
+            : RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(15.0),
                   bottomRight: Radius.circular(15.0),
                 ),
