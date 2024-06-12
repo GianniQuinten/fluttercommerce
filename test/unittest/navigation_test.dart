@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttercommerce/src/services/sneaks_api_service.dart';
 import 'package:fluttercommerce/src/views/home_page.dart';
 import 'package:fluttercommerce/src/views/shoe_overview_page.dart';
 import 'package:fluttercommerce/src/views/contact_page.dart';
 import 'package:fluttercommerce/src/widget/app_bar.dart';
 import 'package:fluttercommerce/src/providers/shoe_provider.dart';
+import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'shoe_overview_test.dart';
+
+class MockSneaksApiService extends Mock implements SneaksApiService {}
 
 void main() {
   final mockApiService = MockSneaksApiService();
