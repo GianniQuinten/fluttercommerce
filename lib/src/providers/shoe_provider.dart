@@ -9,24 +9,28 @@ class ShoeProvider with ChangeNotifier {
       : apiService = apiService ?? SneaksApiService();
 
   List<Shoe> _shoes = [];
+  List<Shoe> _filteredShoes = [];
   bool _isLoading = false;
   Shoe? _selectedShoe;
+  String _currentKeyword = "";
+  int _currentLimit = 20;
 
-  List<Shoe> get shoes => _shoes;
+  List<Shoe> get shoes => _filteredShoes;
   bool get isLoading => _isLoading;
   Shoe? get selectedShoe => _selectedShoe;
 
   Future<void> fetchShoes(String keyword, int limit) async {
     _isLoading = true;
+    _currentKeyword = keyword;
+    _currentLimit = limit;
     notifyListeners();
+
+    keyword = keyword + " Shoe"; // Make it so the search query always is a Shoe
 
     try {
       final data = await apiService.fetchProducts(keyword, limit);
-      print('Full API Response: $data'); // Print the full response
       _shoes = data.map((json) => Shoe.fromJson(json)).toList();
-      for (var shoe in _shoes) {
-        print('Image URL: ${shoe.imageUrl}'); // Print each image URL
-      }
+      _filteredShoes = _shoes;
     } catch (e) {
       // Handle error
       print('Error fetching shoes: $e');
@@ -34,6 +38,26 @@ class ShoeProvider with ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  void filterShoes({String? brand}) {
+    // Update the current keyword based on the brand filter
+    _currentKeyword = brand ?? _currentKeyword;
+
+    // Perform the filtering
+    _filteredShoes = _shoes.where((shoe) {
+      final matchesBrand = brand == null || shoe.brand.toLowerCase().contains(brand.toLowerCase());
+      return matchesBrand;
+    }).toList();
+
+    // Fetch shoes with the updated keyword
+    fetchShoes(_currentKeyword, _currentLimit);
+
+    notifyListeners();
+  }
+
+  Future<void> reloadShoes() async {
+    await fetchShoes(_currentKeyword, _currentLimit);
   }
 
   Future<void> fetchShoeDetails(String id) async {

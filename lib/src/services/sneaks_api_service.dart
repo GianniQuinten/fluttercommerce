@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'dart:io' show Platform;
 
 class SneaksApiService {
   static const String baseUrl = 'http://localhost:4000';
@@ -10,7 +10,7 @@ class SneaksApiService {
     try {
       return await _fetchProductsFromUrl(baseUrl, keyword, limit);
     } catch (e) {
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid) { // Ensure Platform is accessed correctly
         return await _fetchProductsFromUrl(androidBaseUrl, keyword, limit);
       } else {
         throw Exception('Failed to load products: $e');
@@ -32,7 +32,7 @@ class SneaksApiService {
     try {
       return await _fetchProductDetailsFromUrl(baseUrl, id);
     } catch (e) {
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid) { // Ensure Platform is accessed correctly
         return await _fetchProductDetailsFromUrl(androidBaseUrl, id);
       } else {
         throw Exception('Failed to load product details: $e');
