@@ -28,7 +28,7 @@ class ShoeOverviewPage extends StatelessWidget {
               int crossAxisCount = width > 1200 ? 4 : width > 800 ? 3 : 2;
 
               double maxItemHeight;
-              if(defaultTargetPlatform != TargetPlatform.android) {
+              if (defaultTargetPlatform != TargetPlatform.android) {
                 maxItemHeight = crossAxisCount == 4 ? 320 : crossAxisCount == 3 ? 265 : 267.5;
               } else {
                 maxItemHeight = 190;
@@ -81,21 +81,23 @@ class ShoeOverviewPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15.0),
-                              child: AspectRatio(
-                                aspectRatio: 2 / 1, // Adjust the aspect ratio as needed
-                                child: shoe.imageUrl.isNotEmpty
-                                    ? Image.network(
-                                  shoe.imageUrl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.error); // Display an error icon if the image fails to load
-                                  },
-                                )
-                                    : Icon(Icons.image_not_supported), // Display a placeholder icon if the URL is empty
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15.0),
+                                child: AspectRatio(
+                                  aspectRatio: 2 / 1, // Adjust the aspect ratio as needed
+                                  child: shoe.imageUrl.isNotEmpty
+                                      ? Image.network(
+                                    shoe.imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(Icons.error); // Display an error icon if the image fails to load
+                                    },
+                                  )
+                                      : Icon(Icons.image_not_supported), // Display a placeholder icon if the URL is empty
+                                ),
                               ),
                             ),
                           ),
