@@ -57,14 +57,15 @@ jobs:
 
       - name: Docker build as final
         run: |
-          TAG_NAME=${{ github.ref_name }}
-          TAG_NAME_CLEANED=${{ github.ref_name }} | tr '/' '-'
+          TAG_NAME="${{ github.ref_name }}"
+          TAG_NAME_CLEANED=$(echo "${TAG_NAME}" | tr '/' '-')
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ TAG_NAME_CLEANED }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${TAG_NAME_CLEANED} \
             -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest \
             --push \
             -f Dockerfile .
+      
 
           
           
