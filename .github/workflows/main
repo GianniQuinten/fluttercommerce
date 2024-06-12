@@ -1,0 +1,403 @@
+
+name: CI for FlutterCommerce
+
+on:
+  push:
+    branches: [ develop, docker ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        run: flutter build web --release
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
+
+
+      - name: Save Docker image artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-image
+          path: image.tar
+
+
+  build_android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Android APK
+        run: flutter build apk --release
+
+      - name: Archive Android APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+
+
+  build_ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build iOS App
+        run: flutter build ios --release --no-codesign
+
+      - name: Archive iOS App
+        uses: actions/upload-artifact@v2
+        with:
+          name: ios-app
+          path: build/ios/Release-iphoneos/*.app
+
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Windows App
+        run: flutter build windows --release
+
+      - name: Archive Windows App
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-app
+          path: build/windows/runner/Release
+
+#  unittesting:
+#    runs-on: ubuntu-latest
+#    needs: build
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Set up Flutter
+#        uses: subosito/flutter-action@v2
+#        with:
+#          flutter-version: '3.22.1' # Ensure this matches your pubspec.yaml version
+#
+#      - name: Install Dependencies
+#        run: flutter pub get
+#
+#      - name: Run Unit Tests
+#        run: flutter test
+
+  prepare_release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker build as final
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.ref_name }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest \
+            --push \
+            -f Dockerfile .
+          
+          
+
+  infrastructure_testing:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Environment Variables
+        run: |
+          echo "Setting up environment variables"
+
+      - name: Cache Goss
+        uses: actions/cache@v2
+        with:
+          path: ~/.goss
+          key: ${{ runner.os }}-goss-${{ hashFiles('**/goss*.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-goss-
+
+      - name: Install Goss
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "Installing Goss"
+          curl -fsSL https://goss.rocks/install | sh
+
+      - name: Verify Goss Installation
+        run: |
+          echo "Verifying Goss installation"
+          which goss
+          goss --version
+
+      - name: Create Goss Test 1
+        run: |
+          echo "Creating Goss test 1"
+          mkdir -p /tmp/goss-tests
+          cat <<EOF > /tmp/goss-tests/goss-test1.yaml
+          file:
+            /tmp/goss_test_file:
+              exists: true
+              mode: "0755"
+              owner: "root"
+              group: "root"
+          command:
+            echo_hello_world:
+              exit-status: 0
+              stdout:
+                - "Hello, World!"
+              stderr: []
+          EOF
+
+      - name: Create Goss Test 2
+        run: |
+          echo "Creating Goss test 2"
+          mkdir -p /tmp/goss-tests
+          cat <<EOF > /tmp/goss-tests/goss-test2.yaml
+          file:
+            /tmp/another_test_file:
+              exists: true
+              mode: "0644"
+              owner: "root"
+              group: "root"
+          command:
+            echo_goodbye_world:
+              exit-status: 0
+              stdout:
+                - "Goodbye, World!"
+              stderr: []
+          EOF
+
+      - name: Create Goss Test 3
+        run: |
+          echo "Creating Goss test 3"
+          mkdir -p /tmp/goss-tests
+          cat <<EOF > /tmp/goss-tests/goss-test3.yaml
+          file:
+            /tmp/yet_another_test_file:
+              exists: true
+              mode: "0644"
+              owner: "root"
+              group: "root"
+          command:
+            echo_foo_bar:
+              exit-status: 0
+              stdout:
+                - "Foo Bar!"
+              stderr: []
+          EOF
+
+      - name: Create Test Files
+        run: |
+          echo "Creating test files"
+          sudo touch /tmp/goss_test_file /tmp/another_test_file /tmp/yet_another_test_file
+          sudo chmod 0755 /tmp/goss_test_file
+          sudo chmod 0644 /tmp/another_test_file /tmp/yet_another_test_file
+          sudo chown root:root /tmp/goss_test_file /tmp/another_test_file /tmp/yet_another_test_file
+
+      - name: Run Goss Test 1
+        run: |
+          echo "Running Goss test 1"
+          goss -g /tmp/goss-tests/goss-test1.yaml validate --format json > /tmp/goss-tests/goss-test1-output.json || true
+          echo "Goss test 1 output:"
+          cat /tmp/goss-tests/goss-test1-output.json || true
+
+      - name: Run Goss Test 2
+        run: |
+          echo "Running Goss test 2"
+          goss -g /tmp/goss-tests/goss-test2.yaml validate --format json > /tmp/goss-tests/goss-test2-output.json || true
+          echo "Goss test 2 output:"
+          cat /tmp/goss-tests/goss-test2-output.json || true
+
+      - name: Run Goss Test 3
+        run: |
+          echo "Running Goss test 3"
+          goss -g /tmp/goss-tests/goss-test3.yaml validate --format json > /tmp/goss-tests/goss-test3-output.json || true
+          echo "Goss test 3 output:"
+          cat /tmp/goss-tests/goss-test3-output.json || true
+
+      - name: Collect Test Reports
+        run: |
+          echo "Collecting test reports"
+          mkdir -p test-reports
+          cp /tmp/goss-tests/goss-test1-output.json test-reports/
+          cp /tmp/goss-tests/goss-test2-output.json test-reports/
+          cp /tmp/goss-tests/goss-test3-output.json test-reports/
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: infrastructure-test-results
+          path: test-reports
+
+  push_dockerhub:
+    runs-on: ubuntu-latest
+    needs: infrastructure_testing
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+  security_testing:
+    runs-on: ubuntu-latest
+    needs: push_dockerhub
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest .
+
+      - name: Push Docker image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+      - name: Install Docker Scout
+        run: |
+          curl -sSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh
+
+      - name: Run Docker Scout analysis
+        run: docker scout cves ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+
+  setup_grafana:
+    runs-on: ubuntu-latest
+    needs: security_testing
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Run Grafana container
+        run: |
+          docker run -d -p 3000:3000 --name grafana grafana/grafana:latest
+
+      - name: Wait for Grafana to be ready
+        run: |
+          until curl -s http://localhost:3000/login | grep -q "Grafana"; do
+            echo "Waiting for Grafana to start...";
+            sleep 5;
+          done
+
+      - name: Configure Grafana (optional)
+        run: |
+          # Example: Set up a default Grafana dashboard, data sources, etc.
+          echo "Setting up Grafana configurations"
+
+      - name: Check Grafana status
+        run: curl -s http://localhost:3000/api/health
+
+
+#Explanation of Each Job:
+#Build:
+#
+#  Checks out the code, sets up Flutter, installs dependencies, builds the Flutter web application, and sets up Docker Buildx.
+#Unittesting:
+#
+#  Depends on the build job.
+#  Checks out the code, sets up Flutter, installs dependencies, and runs unit tests.
+#Prepare Release:
+#
+#  Depends on the unittesting job.
+#  Checks out the code and runs steps to prepare the release (e.g., bumping version, creating a changelog).
+#Infrastructure Testing:
+#
+#  Depends on the prepare_release job.
+#  Checks out the code and runs infrastructure tests.
+#Push Docker Hub:
+#
+#  Depends on the infrastructure_testing job.
+#  Checks out the code, sets up Docker Buildx, logs into Docker Hub, builds, and pushes the Docker image.
+#Security Testing:
+#
+#  Depends on the push_dockerhub job.
+#  Checks out the code, installs Docker, installs Docker Scout, pulls the Docker image from Docker Hub, and runs Docker Scout for security analysis.

@@ -27,15 +27,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-#      - name: Build Docker image
-#        run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
+      - name: Build Docker image
+        run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
 
 
-#      - name: Save Docker image artifact
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: docker-image
-#          path: image.tar
+      - name: Save Docker image artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-image
+          path: image.tar
 
 
   build_android:
@@ -110,6 +110,7 @@ jobs:
           name: windows-app
           path: build/windows/runner/Release
 
+#i think that the test results  can be better uploaded then this aproach.
   unittesting:
     runs-on: ubuntu-latest
     needs: build
@@ -125,8 +126,18 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Create Test Reports Directory
+        run: mkdir -p test-reports
+
       - name: Run Unit Tests
-        run: flutter test
+        run: flutter test --machine > test-reports/results.json
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: test-reports/results.json
+
 
   prepare_release:
     runs-on: ubuntu-latest
@@ -135,11 +146,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Bump version and create changelog
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-image
+          path: image.tar
+
+      - name: Load Docker image
+        run: docker load -i image.tar
+
+      - name: Set up Git
         run: |
-          # Commands to bump version and create a changelog
-          # This can be customized based on your release process
-          echo "Prepare release steps go here"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Bump Version and Generate Changelog
+        run: |
+          docker run --rm -v $(pwd):/workspace -w /workspace fluttercommerce:latest /bin/bash -c "
+          dart pub global activate pubspec_bump &&
+          dart pub global run pubspec_bump patch &&
+          npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0"
+
+      - name: Commit and Tag
+        run: |
+          git add pubspec.yaml CHANGELOG.md
+          git commit -m "chore(release): bump version and update changelog"
+          VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}')
+          git tag "v$VERSION"
+
+      - name: Push Changes and Tags
+        run: |
+          git push origin HEAD:main
+          git push origin --tags
 
   infrastructure_testing:
     runs-on: ubuntu-latest
@@ -185,11 +223,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-#      - name: Install Docker Scout
-#        run: curl -sSL https://get.docker.com/ | sh
-#
-#      - name: Run Docker Scout analysis
-#        run: docker scout quickview --image ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest .
+
+      - name: Push Docker image to DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+      - name: Install Docker Scout
+        run: |
+          curl -sSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh
+
+      - name: Run Docker Scout analysis
+        run: docker scout cves ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
 
 #Explanation of Each Job:
@@ -206,7 +268,7 @@ jobs:
 #  Checks out the code and runs steps to prepare the release (e.g., bumping version, creating a changelog).
 #Infrastructure Testing:
 #
-#  Depends on the prepare_release job.
+#  Depends on the prepare_release.yml job.
 #  Checks out the code and runs infrastructure tests.
 #Push Docker Hub:
 #

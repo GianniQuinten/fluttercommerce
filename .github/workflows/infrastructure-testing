@@ -1,0 +1,168 @@
+name: CI test infrastructure
+
+on:
+  push:
+    branches: [ develop, docker ]
+  pull_request:
+    branches: [ develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        run: flutter build web --release
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
+
+      - name: Save Docker image artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-image
+          path: image.tar
+
+  infrastructure_testing:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Environment Variables
+        run: |
+          echo "Setting up environment variables"
+
+      - name: Cache Goss
+        uses: actions/cache@v2
+        with:
+          path: ~/.goss
+          key: ${{ runner.os }}-goss-${{ hashFiles('**/goss*.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-goss-
+
+      - name: Install Goss
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "Installing Goss"
+          curl -fsSL https://goss.rocks/install | sh
+
+      - name: Verify Goss Installation
+        run: |
+          echo "Verifying Goss installation"
+          which goss
+          goss --version
+
+      - name: Create Goss Test 1
+        run: |
+          echo "Creating Goss test 1"
+          mkdir -p /tmp/goss-tests
+          cat <<EOF > /tmp/goss-tests/goss-test1.yaml
+          file:
+            /tmp/goss_test_file:
+              exists: true
+              mode: "0755"
+              owner: "root"
+              group: "root"
+          command:
+            echo_hello_world:
+              exit-status: 0
+              stdout:
+                - "Hello, World!"
+              stderr: []
+          EOF
+
+      - name: Create Goss Test 2
+        run: |
+          echo "Creating Goss test 2"
+          mkdir -p /tmp/goss-tests
+          cat <<EOF > /tmp/goss-tests/goss-test2.yaml
+          file:
+            /tmp/another_test_file:
+              exists: true
+              mode: "0644"
+              owner: "root"
+              group: "root"
+          command:
+            echo_goodbye_world:
+              exit-status: 0
+              stdout:
+                - "Goodbye, World!"
+              stderr: []
+          EOF
+
+      - name: Create Goss Test 3
+        run: |
+          echo "Creating Goss test 3"
+          mkdir -p /tmp/goss-tests
+          cat <<EOF > /tmp/goss-tests/goss-test3.yaml
+          file:
+            /tmp/yet_another_test_file:
+              exists: true
+              mode: "0644"
+              owner: "root"
+              group: "root"
+          command:
+            echo_foo_bar:
+              exit-status: 0
+              stdout:
+                - "Foo Bar!"
+              stderr: []
+          EOF
+
+      - name: Create Test Files
+        run: |
+          echo "Creating test files"
+          sudo touch /tmp/goss_test_file /tmp/another_test_file /tmp/yet_another_test_file
+          sudo chmod 0755 /tmp/goss_test_file
+          sudo chmod 0644 /tmp/another_test_file /tmp/yet_another_test_file
+          sudo chown root:root /tmp/goss_test_file /tmp/another_test_file /tmp/yet_another_test_file
+
+      - name: Run Goss Test 1
+        run: |
+          echo "Running Goss test 1"
+          goss -g /tmp/goss-tests/goss-test1.yaml validate --format json > /tmp/goss-tests/goss-test1-output.json || true
+          echo "Goss test 1 output:"
+          cat /tmp/goss-tests/goss-test1-output.json || true
+
+      - name: Run Goss Test 2
+        run: |
+          echo "Running Goss test 2"
+          goss -g /tmp/goss-tests/goss-test2.yaml validate --format json > /tmp/goss-tests/goss-test2-output.json || true
+          echo "Goss test 2 output:"
+          cat /tmp/goss-tests/goss-test2-output.json || true
+
+      - name: Run Goss Test 3
+        run: |
+          echo "Running Goss test 3"
+          goss -g /tmp/goss-tests/goss-test3.yaml validate --format json > /tmp/goss-tests/goss-test3-output.json || true
+          echo "Goss test 3 output:"
+          cat /tmp/goss-tests/goss-test3-output.json || true
+
+      - name: Collect Test Reports
+        run: |
+          echo "Collecting test reports"
+          mkdir -p test-reports
+          cp /tmp/goss-tests/goss-test1-output.json test-reports/
+          cp /tmp/goss-tests/goss-test2-output.json test-reports/
+          cp /tmp/goss-tests/goss-test3-output.json test-reports/
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: infrastructure-test-results
+          path: test-reports

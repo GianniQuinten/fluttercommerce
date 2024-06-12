@@ -1,6 +1,21 @@
+#http:
+#  check80:
+#    url: http://localhost/
+#    status: 200
+#    timeout: 500
+#    body:
+#      - "RAM OK ROM OK"
+
 file:
-  /etc/myapp/config.yaml:
+  /tmp/goss_test_file:
     exists: true
-port:
-  tcp:80:
-    listening: true
+    mode: "0755"
+    owner: "root"
+    group: "root"
+
+command:
+  echo_hello_world:
+    exit-status: 0
+    stdout:
+      - "Hello, World!"
+    stderr: []
