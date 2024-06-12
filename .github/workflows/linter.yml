@@ -7,7 +7,7 @@ on:
     branches: [ develop, main ]
 
 jobs:
-  lint:
+  linter:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,6 +25,7 @@ jobs:
         run: flutter analyze
 
   build:
+    needs: linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -56,6 +57,7 @@ jobs:
 
 
   build_android:
+    needs: linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -81,6 +83,7 @@ jobs:
 
 
   build_ios:
+    needs: linter
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -105,6 +108,7 @@ jobs:
 
 
   build_windows:
+    needs: linter
     runs-on: windows-latest
     steps:
       - name: Checkout code
