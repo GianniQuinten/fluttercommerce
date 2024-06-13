@@ -40,16 +40,16 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                     int crossAxisCount = width > 1200
                         ? 4
                         : width > 800
-                            ? 3
-                            : 2;
+                        ? 3
+                        : 2;
 
                     double maxItemHeight;
                     if (defaultTargetPlatform != TargetPlatform.android) {
                       maxItemHeight = crossAxisCount == 4
                           ? 320
                           : crossAxisCount == 3
-                              ? 265
-                              : 267.5;
+                          ? 265
+                          : 267.5;
                     } else {
                       maxItemHeight = 190;
                     }
@@ -76,13 +76,14 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ShoeDetailsPage(
-                                  shoeId: shoe.id,
-                                  shoeName: shoe.name,
-                                  shoeBrand: shoe.brand,
-                                  shoeImageURL: shoe.imageUrl,
-                                  shoePrice: shoe.price,
-                                ),
+                                builder: (context) =>
+                                    ShoeDetailsPage(
+                                      shoeId: shoe.id,
+                                      shoeName: shoe.name,
+                                      shoeBrand: shoe.brand,
+                                      shoeImageURL: shoe.imageUrl,
+                                      shoePrice: shoe.price,
+                                    ),
                               ),
                             );
                           },
@@ -107,7 +108,7 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                                 Expanded(
                                   child: Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                                    const EdgeInsets.fromLTRB(8, 8, 8, 0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(15.0),
                                       child: AspectRatio(
@@ -115,16 +116,16 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                                         // Adjust the aspect ratio as needed
                                         child: shoe.imageUrl.isNotEmpty
                                             ? Image.network(
-                                                shoe.imageUrl,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  return Icon(Icons
-                                                      .error); // Display an error icon if the image fails to load
-                                                },
-                                              )
+                                          shoe.imageUrl,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error,
+                                              stackTrace) {
+                                            return Icon(Icons
+                                                .error); // Display an error icon if the image fails to load
+                                          },
+                                        )
                                             : Icon(Icons
-                                                .image_not_supported), // Display a placeholder icon if the URL is empty
+                                            .image_not_supported), // Display a placeholder icon if the URL is empty
                                       ),
                                     ),
                                   ),
@@ -133,7 +134,7 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         shoe.name,
@@ -202,13 +203,18 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
       child: Column(
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
+                flex: 2,
                 child: DropdownButtonFormField<String>(
                   value: selectedBrand,
-                  hint: Text('Select a shoe brand'),
+                  hint: Text(
+                    'Select a brand',
+                  ),
                   decoration: InputDecoration(
-                    labelText: 'Brand',
+                    hintMaxLines: 1,
+                    hintStyle: TextStyle(overflow: TextOverflow.ellipsis),
                     border: OutlineInputBorder(),
                   ),
                   onChanged: (String? newValue) {
@@ -216,22 +222,27 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                       selectedBrand = newValue;
                     });
                   },
-                  items:
-                      shoeBrands.map<DropdownMenuItem<String>>((String value) {
+                  items: shoeBrands
+                      .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
                     );
-                  }).toList(),
+                  })
+                      .toList(),
                 ),
               ),
               SizedBox(width: 8),
               Expanded(
+                flex: 2,
                 child: DropdownButtonFormField<String>(
                   value: selectedColor,
-                  hint: Text('Select a shoe color'),
+                  hint: Text(
+                    'Select a color',
+                  ),
                   decoration: InputDecoration(
-                    labelText: 'Color',
+                    hintMaxLines: 1,
+                    hintStyle: TextStyle(overflow: TextOverflow.ellipsis),
                     border: OutlineInputBorder(),
                   ),
                   onChanged: (String? newValue) {
@@ -239,33 +250,61 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                       selectedColor = newValue;
                     });
                   },
-                  items:
-                      shoeColors.map<DropdownMenuItem<String>>((String value) {
+                  items: shoeColors
+                      .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
                     );
-                  }).toList(),
+                  })
+                      .toList(),
                 ),
               ),
               SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: () {
-                  shoeProvider.filterShoes(
-                      brand: selectedBrand, color: selectedColor);
-                },
-                child: Text('Apply'),
-              ),
-              SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    selectedBrand = null;
-                    selectedColor = null;
-                  });
-                  shoeProvider.reloadShoes();
-                },
-                child: Text('Clear Filters'),
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: IconButton(
+                        onPressed: () {
+                          shoeProvider.filterShoes(
+                            brand: selectedBrand,
+                            color: selectedColor,
+                          );
+                        },
+                        style: IconButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color(0xFF246EB9),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12), // Corner radius
+                          ),
+                        ),
+                        icon: const Icon(Icons.search),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedBrand = null;
+                            selectedColor = null;
+                          });
+                          shoeProvider.reloadShoes();
+                        },
+                        style: IconButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.redAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12), // Corner radius
+                          ),
+                        ),
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
