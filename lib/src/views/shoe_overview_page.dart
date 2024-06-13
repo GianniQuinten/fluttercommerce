@@ -12,6 +12,7 @@ class ShoeOverviewPage extends StatefulWidget {
 
 class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
   String? selectedBrand;
+  String? selectedColor;
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +37,25 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                     double width = constraints.maxWidth;
 
                     // Calculate the cross axis count based on the available width
-                    int crossAxisCount = width > 1200 ? 4 : width > 800 ? 3 : 2;
+                    int crossAxisCount = width > 1200
+                        ? 4
+                        : width > 800
+                            ? 3
+                            : 2;
 
                     double maxItemHeight;
                     if (defaultTargetPlatform != TargetPlatform.android) {
-                      maxItemHeight = crossAxisCount == 4 ? 320 : crossAxisCount == 3 ? 265 : 267.5;
+                      maxItemHeight = crossAxisCount == 4
+                          ? 320
+                          : crossAxisCount == 3
+                              ? 265
+                              : 267.5;
                     } else {
                       maxItemHeight = 190;
                     }
 
-                    double itemWidth = (width - (crossAxisCount - 1) * 25) / crossAxisCount;
+                    double itemWidth =
+                        (width - (crossAxisCount - 1) * 25) / crossAxisCount;
 
                     // Calculate the aspect ratio based on the max item height
                     double aspectRatio = itemWidth / maxItemHeight;
@@ -78,14 +88,16 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white, // White background for the card
+                              color: Colors.white,
+                              // White background for the card
                               borderRadius: BorderRadius.circular(15.0),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.1),
                                   spreadRadius: 1,
                                   blurRadius: 5,
-                                  offset: Offset(0, 3), // Give a shadow to the container
+                                  offset: Offset(
+                                      0, 3), // Give a shadow to the container
                                 ),
                               ],
                             ),
@@ -94,20 +106,25 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                               children: [
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                                    padding:
+                                        const EdgeInsets.fromLTRB(8, 8, 8, 0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(15.0),
                                       child: AspectRatio(
-                                        aspectRatio: 2 / 1, // Adjust the aspect ratio as needed
+                                        aspectRatio: 2 / 1,
+                                        // Adjust the aspect ratio as needed
                                         child: shoe.imageUrl.isNotEmpty
                                             ? Image.network(
-                                          shoe.imageUrl,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return Icon(Icons.error); // Display an error icon if the image fails to load
-                                          },
-                                        )
-                                            : Icon(Icons.image_not_supported), // Display a placeholder icon if the URL is empty
+                                                shoe.imageUrl,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return Icon(Icons
+                                                      .error); // Display an error icon if the image fails to load
+                                                },
+                                              )
+                                            : Icon(Icons
+                                                .image_not_supported), // Display a placeholder icon if the URL is empty
                                       ),
                                     ),
                                   ),
@@ -115,16 +132,21 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         shoe.name,
-                                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      Text(shoe.brand, style: TextStyle(fontSize: 12)),
-                                      Text('\$${shoe.price.toString()}', style: TextStyle(fontSize: 12)),
+                                      Text(shoe.brand,
+                                          style: TextStyle(fontSize: 12)),
+                                      Text('\$${shoe.price.toString()}',
+                                          style: TextStyle(fontSize: 12)),
                                     ],
                                   ),
                                 ),
@@ -161,8 +183,22 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
       'Burberry',
     ];
 
+    // 10 Common colors for the filter
+    final List<String> shoeColors = [
+      'Black',
+      'White',
+      'Grey',
+      'Red',
+      'Blue',
+      'Yellow',
+      'Purple',
+      'Pink',
+      'Orange',
+      'Brown',
+    ];
+
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
       child: Column(
         children: [
           Row(
@@ -180,7 +216,31 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                       selectedBrand = newValue;
                     });
                   },
-                  items: shoeBrands.map<DropdownMenuItem<String>>((String value) {
+                  items:
+                      shoeBrands.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: selectedColor,
+                  hint: Text('Select a shoe color'),
+                  decoration: InputDecoration(
+                    labelText: 'Color',
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedColor = newValue;
+                    });
+                  },
+                  items:
+                      shoeColors.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -191,23 +251,23 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
               SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
-                  if (selectedBrand != null) {
-                    shoeProvider.filterShoes(brand: selectedBrand!);
-                  }
+                  shoeProvider.filterShoes(
+                      brand: selectedBrand, color: selectedColor);
                 },
                 child: Text('Apply'),
               ),
+              SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    selectedBrand = null;
+                    selectedColor = null;
+                  });
+                  shoeProvider.reloadShoes();
+                },
+                child: Text('Clear Filters'),
+              ),
             ],
-          ),
-          SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                selectedBrand = null;
-              });
-              shoeProvider.reloadShoes(keyword: ""); // Clear the brand
-            },
-            child: Text('Clear Brand'),
           ),
         ],
       ),

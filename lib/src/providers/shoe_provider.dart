@@ -40,15 +40,13 @@ class ShoeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void filterShoes({String? brand}) {
-    // Update the current keyword based on the brand filter
-    _currentKeyword = brand ?? _currentKeyword;
+  void filterShoes({String? brand, String? color}) {
+    // Adjust the keyword to include the color if selected
+    _currentKeyword = brand ?? '';
 
-    // Perform the filtering
-    _filteredShoes = _shoes.where((shoe) {
-      final matchesBrand = brand == null || shoe.brand.toLowerCase().contains(brand.toLowerCase());
-      return matchesBrand;
-    }).toList();
+    if (color != null) {
+      _currentKeyword += ' $color'; // Add the selected color to the search keyword
+    }
 
     // Fetch shoes with the updated keyword
     fetchShoes(_currentKeyword, _currentLimit);
