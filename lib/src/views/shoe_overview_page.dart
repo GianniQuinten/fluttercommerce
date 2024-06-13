@@ -5,7 +5,14 @@ import '../providers/shoe_provider.dart';
 import 'shoe_details_page.dart';
 import '../widget/app_bar.dart';
 
-class ShoeOverviewPage extends StatelessWidget {
+class ShoeOverviewPage extends StatefulWidget {
+  @override
+  _ShoeOverviewPageState createState() => _ShoeOverviewPageState();
+}
+
+class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
+  String? selectedBrand;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,8 +146,8 @@ class ShoeOverviewPage extends StatelessWidget {
 
   Widget _buildFilterSection(BuildContext context) {
     final shoeProvider = Provider.of<ShoeProvider>(context, listen: false);
-    String? selectedBrand;
 
+    // 10 Famous shoe brands for the filter
     final List<String> shoeBrands = [
       'Nike',
       'Adidas',
@@ -169,7 +176,9 @@ class ShoeOverviewPage extends StatelessWidget {
                     border: OutlineInputBorder(),
                   ),
                   onChanged: (String? newValue) {
-                    selectedBrand = newValue;
+                    setState(() {
+                      selectedBrand = newValue;
+                    });
                   },
                   items: shoeBrands.map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
@@ -193,8 +202,10 @@ class ShoeOverviewPage extends StatelessWidget {
           SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
-              selectedBrand = null;
-              shoeProvider.reloadShoes();
+              setState(() {
+                selectedBrand = null;
+              });
+              shoeProvider.reloadShoes(keyword: ""); // Clear the brand
             },
             child: Text('Clear Brand'),
           ),

@@ -56,7 +56,8 @@ class ShoeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> reloadShoes() async {
+  Future<void> reloadShoes({String keyword = ""}) async {
+    _currentKeyword = keyword;
     await fetchShoes(_currentKeyword, _currentLimit);
   }
 
