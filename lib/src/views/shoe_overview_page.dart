@@ -139,7 +139,20 @@ class ShoeOverviewPage extends StatelessWidget {
 
   Widget _buildFilterSection(BuildContext context) {
     final shoeProvider = Provider.of<ShoeProvider>(context, listen: false);
-    final brandController = TextEditingController();
+    String? selectedBrand;
+
+    final List<String> shoeBrands = [
+      'Nike',
+      'Adidas',
+      'Puma',
+      'Reebok',
+      'New Balance',
+      'Converse',
+      'Vans',
+      'Under Armour',
+      'Timberland',
+      'Burberry',
+    ];
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -148,19 +161,30 @@ class ShoeOverviewPage extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: TextField(
-                  controller: brandController,
+                child: DropdownButtonFormField<String>(
+                  value: selectedBrand,
+                  hint: Text('Select a shoe brand'),
                   decoration: InputDecoration(
                     labelText: 'Brand',
                     border: OutlineInputBorder(),
                   ),
+                  onChanged: (String? newValue) {
+                    selectedBrand = newValue;
+                  },
+                  items: shoeBrands.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
               ),
               SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
-                  final brand = brandController.text;
-                  shoeProvider.filterShoes(brand: brand);
+                  if (selectedBrand != null) {
+                    shoeProvider.filterShoes(brand: selectedBrand!);
+                  }
                 },
                 child: Text('Apply'),
               ),
@@ -169,7 +193,7 @@ class ShoeOverviewPage extends StatelessWidget {
           SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
-              brandController.clear();
+              selectedBrand = null;
               shoeProvider.reloadShoes();
             },
             child: Text('Clear Brand'),
