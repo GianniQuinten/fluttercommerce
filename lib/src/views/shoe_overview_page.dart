@@ -209,8 +209,9 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                 flex: 2,
                 child: DropdownButtonFormField<String>(
                   value: selectedBrand,
+                  isExpanded: true,
                   hint: Text(
-                    'Select a brand',
+                    defaultTargetPlatform == TargetPlatform.android ? 'Brand' : 'Select a brand',
                   ),
                   decoration: InputDecoration(
                     hintMaxLines: 1,
@@ -237,8 +238,9 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                 flex: 2,
                 child: DropdownButtonFormField<String>(
                   value: selectedColor,
+                  isExpanded: true,
                   hint: Text(
-                    'Select a color',
+                    defaultTargetPlatform == TargetPlatform.android ? 'Color' : 'Select a color',
                   ),
                   decoration: InputDecoration(
                     hintMaxLines: 1,
