@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widget/app_bar.dart';
 import '../providers/cart_provider.dart';
+import 'order_registry_page.dart';
 
 class ShoppingCartPage extends StatelessWidget {
   static const routeName = '/shopping-cart';
@@ -39,7 +40,10 @@ class ShoppingCartPage extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      // Handle checkout process
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => OrderRegistryPage()),
+                      );
                     },
                     child: Text('ORDER NOW'),
                     style: TextButton.styleFrom(

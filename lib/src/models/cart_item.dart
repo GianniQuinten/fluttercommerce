@@ -16,4 +16,6 @@ class CartItem {
     required this.price,
     required this.quantity,
   });
+
+  double get totalPrice => price * quantity;
 }
