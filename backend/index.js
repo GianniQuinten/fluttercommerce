@@ -4,9 +4,16 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 require('./routes/sneaks.routes.js')(app);
 const SneaksAPI = require('./controllers/sneaks.controllers.js');
+const orderRoutes = require('./routes/orderRoutes'); // Ensure the path is correct
 
 var port = process.env.PORT || 4000;
 mongoose.Promise = global.Promise;
+
+// Middleware
+app.use(express.json());
+
+// Integrate Order Routes
+app.use('/api', orderRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -22,4 +29,3 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   });
 
 module.exports = app;
-module.exports = SneaksAPI;
