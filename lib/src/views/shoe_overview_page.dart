@@ -208,6 +208,7 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
               Expanded(
                 flex: 2,
                 child: DropdownButtonFormField<String>(
+                  key: Key('brandDropdown'),
                   value: selectedBrand,
                   isExpanded: true,
                   hint: Text(
@@ -237,6 +238,7 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
               Expanded(
                 flex: 2,
                 child: DropdownButtonFormField<String>(
+                  key: Key('colorDropdown'),
                   value: selectedColor,
                   isExpanded: true,
                   hint: Text(
@@ -269,6 +271,7 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                   children: [
                     Expanded(
                       child: IconButton(
+                        key: Key('searchButton'),
                         onPressed: () {
                           shoeProvider.filterShoes(
                             brand: selectedBrand,
@@ -288,6 +291,7 @@ class _ShoeOverviewPageState extends State<ShoeOverviewPage> {
                     SizedBox(width: 8),
                     Expanded(
                       child: IconButton(
+                        key: Key('resetButton'),
                         onPressed: () {
                           setState(() {
                             selectedBrand = null;
