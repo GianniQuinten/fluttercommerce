@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widget/app_bar.dart';
 import '../providers/shoe_provider.dart';
+import '../providers/cart_provider.dart';
 
 class ShoeDetailsPage extends StatelessWidget {
+  static const routeName = '/shoe-detail';
+
   final String shoeId;
   final String shoeName;
   final String shoeImageURL;
@@ -22,10 +25,11 @@ class ShoeDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: 'JustShoes'),
+      appBar: MyAppBar(
+        title: 'JustShoes',
+      ),
       body: FutureBuilder(
-        future: Provider.of<ShoeProvider>(context, listen: false)
-            .fetchShoeDetails(shoeId),
+        future: Provider.of<ShoeProvider>(context, listen: false).fetchShoeDetails(shoeId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -100,7 +104,19 @@ class ShoeDetailsPage extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: ElevatedButton(
               onPressed: () {
-                // Handle add to cart functionality
+                Provider.of<CartProvider>(context, listen: false).addItem(
+                  shoeId,
+                  shoeName,
+                  shoeBrand,
+                  shoeImageURL,
+                  shoePrice,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Added item to cart!'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,

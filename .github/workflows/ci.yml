@@ -1,0 +1,43 @@
+name: CI for FlutterCommerce
+
+on:
+  push:
+    branches: [ develop, docker ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Run Dart Analyze
+        run: flutter analyze
+
+  unittesting:
+    runs-on: ubuntu-latest
+    needs: linter
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1' # Ensure this matches your pubspec.yaml version
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Run Unit Tests
+        run: flutter test
