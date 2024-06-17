@@ -1,0 +1,30 @@
+name: Setup Grafana for FlutterCommerce
+
+on:
+  workflow_run:
+    workflows: ["Security Testing for FlutterCommerce"]
+    types:
+      - completed
+
+jobs:
+  setup_grafana:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Run Grafana container
+        run: |
+          docker run -d -p 3000:3000 --name grafana grafana/grafana:latest
+      - name: Wait for Grafana to be ready
+        run: |
+          until curl -s http://localhost:3000/login | grep -q "Grafana"; do
+            echo "Waiting for Grafana to start...";
+            sleep 5;
+          done
+      - name: Configure Grafana (optional)
+        run: |
+          # Example: Set up a default Grafana dashboard, data sources, etc.
+          echo "Setting up Grafana configurations"
+      - name: Check Grafana status
+        run: curl -s http://localhost:3000/api/health
