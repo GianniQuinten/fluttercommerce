@@ -2,11 +2,11 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 require('dotenv').config();
-require('./routes/sneaks.routes.js')(app);
-const SneaksAPI = require('./controllers/sneaks.controllers.js');
-const orderRoutes = require('./routes/orderRoutes'); // Ensure the path is correct
+require('./routes/sneaks.routes.js')(app);  // Ensure this is correct
+const SneaksAPI = require('./controllers/sneaks.controllers.js');  // Ensure this is correct
+const orderRoutes = require('./routes/orderRoutes');
 
-var port = process.env.PORT || 4000;
+const port = process.env.PORT || 4000;
 mongoose.Promise = global.Promise;
 
 // Middleware
