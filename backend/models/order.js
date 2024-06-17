@@ -12,11 +12,11 @@ const orderSchema = new Schema({
     type: Number,
     required: true
   },
-  userName: {
+  userName: { // Added field
     type: String,
     required: true
   },
-  userAddress: {
+  userAddress: { // Added field
     type: String,
     required: true
   },

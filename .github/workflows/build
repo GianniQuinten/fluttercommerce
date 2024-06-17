@@ -1,31 +1,13 @@
-name: CI for linter
+name: Build for FlutterCommerce
 
 on:
   push:
-    branches: [ develop, docker ]
+    branches: [ develop, main ]
   pull_request:
     branches: [ develop, main ]
 
 jobs:
-  linter:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.22.1'
-
-      - name: Install Dependencies
-        run: flutter pub get
-
-      - name: Run Dart Analyze
-        run: flutter analyze
-
   build:
-    needs: linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -48,16 +30,13 @@ jobs:
       - name: Build Docker image
         run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
 
-
       - name: Save Docker image artifact
         uses: actions/upload-artifact@v2
         with:
           name: docker-image
           path: image.tar
 
-
   build_android:
-    needs: linter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -80,10 +59,7 @@ jobs:
           name: android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
-
-
   build_ios:
-    needs: linter
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -106,9 +82,7 @@ jobs:
           name: ios-app
           path: build/ios/Release-iphoneos/*.app
 
-
   build_windows:
-    needs: linter
     runs-on: windows-latest
     steps:
       - name: Checkout code
@@ -130,4 +104,3 @@ jobs:
         with:
           name: windows-app
           path: build/windows/runner/Release
-

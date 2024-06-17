@@ -27,37 +27,35 @@ class _OrderRegistryPageState extends State<OrderRegistryPage> {
     if (_formKey.currentState?.validate() ?? false) {
       final cart = Provider.of<CartProvider>(context, listen: false);
       final orderData = {
-        'name': _nameController.text,
-        'address': _addressController.text,
+        'userName': _nameController.text,
+        'userAddress': _addressController.text,
         'items': cart.items.values.map((item) => {
           'shoeId': item.shoeId,
-          'name': item.name,
-          'brand': item.brand,
-          'imageUrl': item.imageUrl,
           'quantity': item.quantity,
-          'price': item.price,
         }).toList(),
       };
 
-      // Send order data to backend
-      final response = await http.post(
-        Uri.parse('http://your-backend-url/orders'), // Replace with your backend URL
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(orderData),
-      );
-
-      if (response.statusCode == 201) {
-        // Clear the cart after order submission
-        cart.clear();
-
-        // Show a success message and navigate back
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Order submitted successfully')),
+      try {
+        final response = await http.post(
+          Uri.parse('http://localhost:4000/api/orders'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(orderData),
         );
-        Navigator.pop(context);
-      } else {
+
+        if (response.statusCode == 201) {
+          cart.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Order submitted successfully')),
+          );
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to submit order')),
+          );
+        }
+      } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit order')),
+          SnackBar(content: Text('Error: $error')),
         );
       }
     }
@@ -107,7 +105,7 @@ class _OrderRegistryPageState extends State<OrderRegistryPage> {
                       leading: Image.network(item.imageUrl),
                       title: Text(item.name),
                       subtitle: Text('Quantity: ${item.quantity}'),
-                      trailing: Text('\$${item.totalPrice}'),
+                      trailing: Text('\$${(item.price * item.quantity).toStringAsFixed(2)}'),
                     );
                   },
                 ),

@@ -1,15 +1,23 @@
 const express = require('express');
-const Order = require('../models/order'); // Ensure the path is correct
+const Order = require('../models/order');
 const router = express.Router();
 
 // Create a new order
 router.post('/orders', async (req, res) => {
-  const { shoeId, quantity, userId } = req.body;
+  const { userName, userAddress, items } = req.body;
+  console.log('Received order data:', req.body);  // Log received data
   try {
-    const order = new Order({ shoeId, quantity, userId });
-    await order.save();
-    res.status(201).send(order);
+    const orders = items.map(item => ({
+      shoeId: item.shoeId,
+      quantity: item.quantity,
+      userName,
+      userAddress,
+    }));
+    console.log('Parsed orders:', orders);  // Log parsed orders
+    const newOrders = await Order.insertMany(orders);
+    res.status(201).send(newOrders);
   } catch (error) {
+    console.error('Error creating order:', error);
     res.status(400).send(error);
   }
 });
