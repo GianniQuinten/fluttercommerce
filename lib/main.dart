@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ShoeProvider()..fetchShoes("Air Force", 20)),
+        ChangeNotifierProvider(create: (_) => ShoeProvider()..fetchShoes("", 20)),
         ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: MaterialApp(
