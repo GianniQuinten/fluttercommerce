@@ -9,7 +9,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
 
   final double extraToolbarHeight =
-      defaultTargetPlatform == TargetPlatform.android ? 45.0 : 25.0;
+  defaultTargetPlatform == TargetPlatform.android ? 45.0 : 25.0;
 
   MyAppBar({required this.title});
 
@@ -95,14 +95,14 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
         shape: defaultTargetPlatform != TargetPlatform.android
             ? RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              )
+          borderRadius: BorderRadius.circular(15.0),
+        )
             : RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(15.0),
-                  bottomRight: Radius.circular(15.0),
-                ),
-              ),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(15.0),
+            bottomRight: Radius.circular(15.0),
+          ),
+        ),
       ),
     );
   }
