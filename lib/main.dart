@@ -5,7 +5,6 @@ import 'src/providers/cart_provider.dart';
 import 'src/views/home_page.dart';
 import 'src/views/shoe_details_page.dart';
 import 'src/views/shopping_cart_page.dart';
-import 'src/views/order_registry_page.dart';
 
 void main() {
   runApp(MyApp());
