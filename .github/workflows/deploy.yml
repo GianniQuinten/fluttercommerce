@@ -1,0 +1,56 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.1'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        run: flutter build web --release
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
+      - name: Deploy to Production Server
+        run: |
+          ssh -i ~/.ssh/id_rsa user@production-server <<EOF
+            docker pull ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+            docker stop fluttercommerce || true
+            docker rm fluttercommerce || true
+            docker run -d --name fluttercommerce -p 80:80 ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+          EOF
