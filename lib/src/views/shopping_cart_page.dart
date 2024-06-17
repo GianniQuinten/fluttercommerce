@@ -127,16 +127,51 @@ class CartItemWidget extends StatelessWidget {
               Text('Total: \$${(price * quantity).toStringAsFixed(2)}'),
             ],
           ),
-          trailing: Row(
+          trailing: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('$quantity x'),
-              SizedBox(width: 10),
-              IconButton(
-                icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
-                onPressed: () {
-                  cart.removeItem(productId);
-                },
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      cart.updateItemQuantity(productId, quantity + 1);
+                    },
+                    style: IconButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  Text('$quantity x', style: TextStyle(fontSize: 14, color: Colors.black)),
+                  SizedBox(width: 10,),
+                  IconButton(
+                    icon: Icon(Icons.remove),
+                    onPressed: () {
+                      if (quantity > 1) {
+                        cart.updateItemQuantity(productId, quantity - 1);
+                      }
+                    },
+                    style: IconButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 30,),
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+                    onPressed: () {
+                      cart.removeItem(productId);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
