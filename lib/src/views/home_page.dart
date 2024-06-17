@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get the screen width
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
 
     // Determine the left and right padding based on the screen width
     double screenPadding = defaultTargetPlatform == TargetPlatform.android ? 20 : 50;
