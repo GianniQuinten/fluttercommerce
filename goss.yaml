@@ -1,14 +1,17 @@
 file:
+#  test 1
   /tmp/goss_test_file:
     exists: true
     mode: "0755"
     owner: "root"
     group: "root"
+#    test 2
   /tmp/another_test_file:
     exists: true
     mode: "0644"
     owner: "root"
     group: "root"
+#    test 3
   /tmp/yet_another_test_file:
     exists: true
     mode: "0644"
