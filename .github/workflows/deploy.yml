@@ -46,11 +46,4 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.sha }}
             ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
-#      - name: Deploy to Production Server
-#        run: |
-#          ssh -i ~/.ssh/id_rsa user@production-server <<EOF
-#            docker pull ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-#            docker stop fluttercommerce || true
-#            docker rm fluttercommerce || true
-#            docker run -d --name fluttercommerce -p 80:80 ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-#          EOF
+
