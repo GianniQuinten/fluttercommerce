@@ -1,21 +1,35 @@
-#http:
-#  check80:
-#    url: http://localhost/
-#    status: 200
-#    timeout: 500
-#    body:
-#      - "RAM OK ROM OK"
-
 file:
   /tmp/goss_test_file:
     exists: true
     mode: "0755"
     owner: "root"
     group: "root"
-
+  /tmp/another_test_file:
+    exists: true
+    mode: "0644"
+    owner: "root"
+    group: "root"
+  /tmp/yet_another_test_file:
+    exists: true
+    mode: "0644"
+    owner: "root"
+    group: "root"
 command:
   echo_hello_world:
+    exec: "echo Hello, World!"
     exit-status: 0
     stdout:
       - "Hello, World!"
+    stderr: []
+  echo_goodbye_world:
+    exec: "echo Goodbye, World!"
+    exit-status: 0
+    stdout:
+      - "Goodbye, World!"
+    stderr: []
+  echo_foo_bar:
+    exec: "echo Foo Bar!"
+    exit-status: 0
+    stdout:
+      - "Foo Bar!"
     stderr: []
