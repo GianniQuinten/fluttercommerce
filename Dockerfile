@@ -34,7 +34,7 @@ COPY --chown=flutteruser:flutteruser . .
 RUN flutter pub get
 
 # Build the Flutter web application
-RUN flutter clean && flutter build web --release
+RUN flutter clean && flutter build.yml web --release
 
 # Use an official Nginx image as the base image for serving content
 FROM nginx:latest
