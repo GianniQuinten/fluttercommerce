@@ -16,11 +16,11 @@ add_executable(${BINARY_NAME} WIN32
   "runner.exe.manifest"
 )
 
-# Apply the standard set of build.yml settings. This can be removed for applications
-# that need different build.yml settings.
+# Apply the standard set of build settings. This can be removed for applications
+# that need different build settings.
 apply_standard_settings(${BINARY_NAME})
 
-# Add preprocessor definitions for the build.yml version.
+# Add preprocessor definitions for the build version.
 target_compile_definitions(${BINARY_NAME} PRIVATE "FLUTTER_VERSION=\"${FLUTTER_VERSION}\"")
 target_compile_definitions(${BINARY_NAME} PRIVATE "FLUTTER_VERSION_MAJOR=${FLUTTER_VERSION_MAJOR}")
 target_compile_definitions(${BINARY_NAME} PRIVATE "FLUTTER_VERSION_MINOR=${FLUTTER_VERSION_MINOR}")
@@ -36,5 +36,5 @@ target_link_libraries(${BINARY_NAME} PRIVATE flutter flutter_wrapper_app)
 target_link_libraries(${BINARY_NAME} PRIVATE "dwmapi.lib")
 target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
 
-# Run the Flutter tool portions of the build.yml. This must not be removed.
+# Run the Flutter tool portions of the build. This must not be removed.
 add_dependencies(${BINARY_NAME} flutter_assemble)

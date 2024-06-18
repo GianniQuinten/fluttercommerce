@@ -44,7 +44,7 @@ packages:
   build:
     dependency: transitive
     description:
-      name: build.yml
+      name: build
       sha256: "80184af8b6cb3e5c1c4ec6d8544d27711700bc3e6d2efad04238c7b5290889f0"
       url: "https://pub.dev"
     source: hosted

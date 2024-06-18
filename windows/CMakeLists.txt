@@ -10,7 +10,7 @@ set(BINARY_NAME "fluttercommerce")
 # versions of CMake.
 cmake_policy(VERSION 3.14...3.25)
 
-# Define build.yml configuration option.
+# Define build configuration option.
 get_property(IS_MULTICONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(IS_MULTICONFIG)
   set(CMAKE_CONFIGURATION_TYPES "Debug;Profile;Release"
@@ -23,7 +23,7 @@ else()
       "Debug" "Profile" "Release")
   endif()
 endif()
-# Define settings for the Profile build.yml mode.
+# Define settings for the Profile build mode.
 set(CMAKE_EXE_LINKER_FLAGS_PROFILE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
 set(CMAKE_C_FLAGS_PROFILE "${CMAKE_C_FLAGS_RELEASE}")
@@ -45,15 +45,15 @@ function(APPLY_STANDARD_SETTINGS TARGET)
   target_compile_definitions(${TARGET} PRIVATE "$<$<CONFIG:Debug>:_DEBUG>")
 endfunction()
 
-# Flutter library and tool build.yml rules.
+# Flutter library and tool build rules.
 set(FLUTTER_MANAGED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/flutter")
 add_subdirectory(${FLUTTER_MANAGED_DIR})
 
-# Application build.yml; see runner/CMakeLists.txt.
+# Application build; see runner/CMakeLists.txt.
 add_subdirectory("runner")
 
 
-# Generated plugin build.yml rules, which manage building the plugins and adding
+# Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
 include(flutter/generated_plugins.cmake)
 
@@ -87,13 +87,13 @@ if(PLUGIN_BUNDLED_LIBRARIES)
     COMPONENT Runtime)
 endif()
 
-# Copy the native assets provided by the build.yml.dart from all packages.
+# Copy the native assets provided by the build.dart from all packages.
 set(NATIVE_ASSETS_DIR "${PROJECT_BUILD_DIR}native_assets/windows/")
 install(DIRECTORY "${NATIVE_ASSETS_DIR}"
    DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
    COMPONENT Runtime)
 
-# Fully re-copy the assets directory on each build.yml to avoid having stale files
+# Fully re-copy the assets directory on each build to avoid having stale files
 # from a previous install.
 set(FLUTTER_ASSET_DIR_NAME "flutter_assets")
 install(CODE "
