@@ -182,14 +182,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Environment Variables
-        run: |
-          echo "Setting up environment variables"
+        run: echo "Setting up environment variables"
 
       - name: Cache Goss
         uses: actions/cache@v2
         with:
           path: ~/.goss
-          key: ${{ runner.os }}-goss-${{ hashFiles('**/goss*.yaml') }}
+          key: ${{ runner.os }}-goss-${{ hashFiles('**/goss.yaml') }}
           restore-keys: |
             ${{ runner.os }}-goss-
 
@@ -205,63 +204,6 @@ jobs:
           which goss
           goss --version
 
-      - name: Create Goss Test 1
-        run: |
-          echo "Creating Goss test 1"
-          mkdir -p /tmp/goss-tests
-          cat <<EOF > /tmp/goss-tests/goss-test1.yaml
-          file:
-            /tmp/goss_test_file:
-              exists: true
-              mode: "0755"
-              owner: "root"
-              group: "root"
-          command:
-            echo_hello_world:
-              exit-status: 0
-              stdout:
-                - "Hello, World!"
-              stderr: []
-          EOF
-
-      - name: Create Goss Test 2
-        run: |
-          echo "Creating Goss test 2"
-          mkdir -p /tmp/goss-tests
-          cat <<EOF > /tmp/goss-tests/goss-test2.yaml
-          file:
-            /tmp/another_test_file:
-              exists: true
-              mode: "0644"
-              owner: "root"
-              group: "root"
-          command:
-            echo_goodbye_world:
-              exit-status: 0
-              stdout:
-                - "Goodbye, World!"
-              stderr: []
-          EOF
-
-      - name: Create Goss Test 3
-        run: |
-          echo "Creating Goss test 3"
-          mkdir -p /tmp/goss-tests
-          cat <<EOF > /tmp/goss-tests/goss-test3.yaml
-          file:
-            /tmp/yet_another_test_file:
-              exists: true
-              mode: "0644"
-              owner: "root"
-              group: "root"
-          command:
-            echo_foo_bar:
-              exit-status: 0
-              stdout:
-                - "Foo Bar!"
-              stderr: []
-          EOF
-
       - name: Create Test Files
         run: |
           echo "Creating test files"
@@ -270,34 +212,18 @@ jobs:
           sudo chmod 0644 /tmp/another_test_file /tmp/yet_another_test_file
           sudo chown root:root /tmp/goss_test_file /tmp/another_test_file /tmp/yet_another_test_file
 
-      - name: Run Goss Test 1
+      - name: Run Goss Tests
         run: |
-          echo "Running Goss test 1"
-          goss -g /tmp/goss-tests/goss-test1.yaml validate --format json > /tmp/goss-tests/goss-test1-output.json || true
-          echo "Goss test 1 output:"
-          cat /tmp/goss-tests/goss-test1-output.json || true
-
-      - name: Run Goss Test 2
-        run: |
-          echo "Running Goss test 2"
-          goss -g /tmp/goss-tests/goss-test2.yaml validate --format json > /tmp/goss-tests/goss-test2-output.json || true
-          echo "Goss test 2 output:"
-          cat /tmp/goss-tests/goss-test2-output.json || true
-
-      - name: Run Goss Test 3
-        run: |
-          echo "Running Goss test 3"
-          goss -g /tmp/goss-tests/goss-test3.yaml validate --format json > /tmp/goss-tests/goss-test3-output.json || true
-          echo "Goss test 3 output:"
-          cat /tmp/goss-tests/goss-test3-output.json || true
+          echo "Running Goss tests"
+          goss -g goss.yaml validate --format json > goss-output.json || true
+          echo "Goss test output:"
+          cat goss-output.json || true
 
       - name: Collect Test Reports
         run: |
           echo "Collecting test reports"
           mkdir -p test-reports
-          cp /tmp/goss-tests/goss-test1-output.json test-reports/
-          cp /tmp/goss-tests/goss-test2-output.json test-reports/
-          cp /tmp/goss-tests/goss-test3-output.json test-reports/
+          cp goss-output.json test-reports/
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v2
@@ -395,27 +321,34 @@ jobs:
         run: curl -s http://localhost:3000/api/health
 
 
-#Explanation of Each Job:
-#Build:
-#
-#  Checks out the code, sets up Flutter, installs dependencies, builds the Flutter web application, and sets up Docker Buildx.
-#Unittesting:
-#
-#  Depends on the build job.
-#  Checks out the code, sets up Flutter, installs dependencies, and runs unit tests.
-#Prepare Release:
-#
-#  Depends on the unittesting job.
-#  Checks out the code and runs steps to prepare the release (e.g., bumping version, creating a changelog).
-#Infrastructure Testing:
-#
-#  Depends on the prepare_release job.
-#  Checks out the code and runs infrastructure tests.
-#Push Docker Hub:
-#
-#  Depends on the infrastructure_testing job.
-#  Checks out the code, sets up Docker Buildx, logs into Docker Hub, builds, and pushes the Docker image.
-#Security Testing:
-#
-#  Depends on the push_dockerhub job.
-#  Checks out the code, installs Docker, installs Docker Scout, pulls the Docker image from Docker Hub, and runs Docker Scout for security analysis.
+# Explanation of Each Job:
+# Linter:
+#   Checks out the code, sets up Flutter, installs dependencies, and runs Dart analyzer to check for code issues.
+# Build:
+#   Checks out the code, sets up Flutter, installs dependencies, builds the Flutter web application, and sets up Docker Buildx.
+# Build Android:
+#   Checks out the code, sets up Flutter, installs dependencies, and builds the Android APK.
+# Build iOS:
+#   Checks out the code, sets up Flutter, installs dependencies, and builds the iOS app without code signing.
+# Build Windows:
+#   Checks out the code, sets up Flutter, installs dependencies, and builds the Windows app.
+# Unittesting:
+#   Depends on the build job.
+#   Checks out the code, sets up Flutter, installs dependencies, and runs unit tests.
+# Prepare Release:
+#   Depends on the unittesting job.
+#   Checks out the code and prepares the Docker image for release by logging into DockerHub and pushing the image.
+# Infrastructure Testing:
+#   Depends on the prepare_release job.
+#   Checks out the code, sets up environment variables, installs and runs Goss tests, and uploads the test results as artifacts.
+# Push Docker Hub:
+#   Depends on the infrastructure_testing job.
+#   Checks out the code, sets up Docker Buildx, logs into Docker Hub, builds, and pushes the Docker image.
+# Security Testing:
+#   Depends on the push_dockerhub job.
+#   Checks out the code, sets up Docker Buildx, installs Docker Scout, pulls the Docker image from Docker Hub, and runs Docker Scout for security analysis.
+# Setup Grafana:
+#   Depends on the security_testing job.
+#   Sets up Docker Buildx, runs Grafana container, waits for Grafana to be ready, optionally configures Grafana, and checks the Grafana status.
+# Deploy:
+#   Checks out the code, sets up Flutter, installs dependencies, builds the Flutter web application, logs into DockerHub, and pushes the Docker image.

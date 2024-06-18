@@ -1,12 +1,12 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+#    if the ci pipeline works. then this job gets triggerd
+#    the reason why the pipeline is not more split is because the lock file is preventing the pipeline from being split (for example tries to build for the file build.yml but if another file is running the pub spec then it wont work)
+    workflows: ["CI for FlutterCommerce"]
+    types:
+      - completed
 
 jobs:
   deploy:
