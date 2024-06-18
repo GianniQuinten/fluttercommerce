@@ -409,7 +409,6 @@ jobs:
 #  Checks out the code and runs steps to prepare the release (e.g., bumping version, creating a changelog).
 #Infrastructure Testing:
 #
-
 #  Depends on the prepare_release job.
 #  Checks out the code and runs infrastructure tests.
 #Push Docker Hub:
