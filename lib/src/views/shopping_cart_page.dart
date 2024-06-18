@@ -18,9 +18,9 @@ class ShoppingCartPage extends StatelessWidget {
       body: Column(
         children: [
           Card(
-            margin: EdgeInsets.all(15),
+            margin: EdgeInsets.fromLTRB(25, 20, 25, 10),
             child: Padding(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.fromLTRB(10, 8, 10, 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -28,7 +28,7 @@ class ShoppingCartPage extends StatelessWidget {
                     'Total',
                     style: TextStyle(fontSize: 20),
                   ),
-                  Spacer(),
+                  SizedBox(width: 10,),
                   Chip(
                     label: Text(
                       '\$${cart.totalAmount.toStringAsFixed(2)}',
@@ -38,6 +38,7 @@ class ShoppingCartPage extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
+                  Spacer(),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
@@ -45,10 +46,15 @@ class ShoppingCartPage extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => OrderRegistryPage()),
                       );
                     },
-                    child: Text('ORDER NOW'),
                     style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
+                      backgroundColor: Color(0xFF246EB9),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     ),
+                    child: Text('ORDER NOW', style: TextStyle(fontSize: 16)),
                   ),
                 ],
               ),
@@ -101,46 +107,73 @@ class CartItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context, listen: false);
 
-    return Dismissible(
-      key: ValueKey(id),
-      background: Container(
-        color: Theme.of(context).colorScheme.error,
-        child: Icon(
-          Icons.delete,
-          color: Colors.white,
-          size: 40,
-        ),
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: 20),
-        margin: EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 4,
-        ),
-      ),
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        cart.removeItem(productId);
-      },
-      child: Card(
-        margin: EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 4,
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(imageUrl),
-            ),
-            title: Text(name),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(brand),
-                Text('Total: \$${(price * quantity)}'),
-              ],
-            ),
-            trailing: Text('$quantity x'),
+    return Card(
+      margin: EdgeInsets.fromLTRB(25, 0, 25, 10),
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(imageUrl),
+          ),
+          title: Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(brand),
+              Text('Total: \$${(price * quantity).toStringAsFixed(2)}'),
+            ],
+          ),
+          trailing: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      cart.updateItemQuantity(productId, quantity + 1);
+                    },
+                    style: IconButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10,),
+                  Text('$quantity x', style: TextStyle(fontSize: 14, color: Colors.black)),
+                  SizedBox(width: 10,),
+                  IconButton(
+                    icon: Icon(Icons.remove),
+                    onPressed: () {
+                      if (quantity > 1) {
+                        cart.updateItemQuantity(productId, quantity - 1);
+                      }
+                    },
+                    style: IconButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 30,),
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error),
+                    onPressed: () {
+                      cart.removeItem(productId);
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
