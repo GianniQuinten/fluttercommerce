@@ -41,7 +41,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Flutter Web
-        run: flutter build web --release.yml
+        run: flutter build web --release
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -72,13 +72,13 @@ jobs:
         run: flutter pub get
 
       - name: Build Android APK
-        run: flutter build apk --release.yml
+        run: flutter build apk --release
 
       - name: Archive Android APK
         uses: actions/upload-artifact@v2
         with:
           name: android-apk
-          path: build/app/outputs/flutter-apk/app-release.yml.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
 
 
 
@@ -97,7 +97,7 @@ jobs:
         run: flutter pub get
 
       - name: Build iOS App
-        run: flutter build ios --release.yml --no-codesign
+        run: flutter build ios --release --no-codesign
 
       - name: Archive iOS App
         uses: actions/upload-artifact@v2
@@ -121,7 +121,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Windows App
-        run: flutter build windows --release.yml
+        run: flutter build windows --release
 
       - name: Archive Windows App
         uses: actions/upload-artifact@v2
@@ -338,7 +338,7 @@ jobs:
 #   Checks out the code, sets up Flutter, installs dependencies, and runs unit tests.
 # Prepare Release:
 #   Depends on the unittesting job.
-#   Checks out the code and prepares the Docker image for release.yml by logging into DockerHub and pushing the image.
+#   Checks out the code and prepares the Docker image for release by logging into DockerHub and pushing the image.
 # Infrastructure Testing:
 #   Depends on the prepare_release job.
 #   Checks out the code, sets up environment variables, installs and runs Goss tests, and uploads the test results as artifacts.
