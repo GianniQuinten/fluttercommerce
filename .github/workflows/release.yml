@@ -1,0 +1,46 @@
+name: Create Release
+
+on:
+  workflow_run:
+#    if the ci pipeline works. then this job gets triggerd
+#    the reason why the pipeline is not more split is because the lock file is preventing the pipeline from being split (for example tries to build for the file build.yml but if another file is running the pub spec then it wont work)
+    workflows: ["CI for FlutterCommerce"]
+    types:
+      - completed
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config user.name 'github-actions'
+          git config user.email 'github-actions@github.com'
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ## Changes in this release
+            - Describe your changes here
+          draft: false
+          prerelease: false
+
+      # Optionally, upload binaries or other files to the release
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: path/to/your/binary
+          asset_name: your-binary-name
+          asset_content_type: application/octet-stream
