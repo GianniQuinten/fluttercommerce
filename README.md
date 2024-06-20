@@ -15,7 +15,7 @@ BADGES
 - [Installation of the project](#installation-of-the-project)
 - [Pubspec YAML](#pubspec-yaml)
 - [Connect with the API](#connect-with-the-api)
-- [
+- [Contact](#contact)
 
 ## Introduction
 Welcome to the shoe webshop Flutter project made by Gianni van Looij and Quinten Schaap.
