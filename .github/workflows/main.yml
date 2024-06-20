@@ -175,7 +175,6 @@ jobs:
       - name: Tag and Push Docker image
         run: |
           docker tag fluttercommerce:latest ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.ref_name }}
-          docker tag fluttercommerce:latest ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.ref_name }}
           docker push ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
