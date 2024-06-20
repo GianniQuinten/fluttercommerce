@@ -1,4 +1,3 @@
-
 name: CI for FlutterCommerce
 
 on:
@@ -154,17 +153,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Download Docker image artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: docker-image
-          path: .
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-#      - name: Load Docker image
-#        run: docker load -i image.tar
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
@@ -172,11 +162,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Tag and Push Docker image
+      - name: Docker build as final
         run: |
-          docker tag fluttercommerce:latest ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.ref_name }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.ref_name }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.ref_name }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest \
+            --push \
+            -f Dockerfile .
 
       - name: Create GitHub Release
         if: github.ref == 'refs/heads/main'
@@ -190,8 +183,8 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          
+
+
 
   infrastructure_testing:
     runs-on: ubuntu-latest
@@ -210,19 +203,16 @@ jobs:
           key: ${{ runner.os }}-goss-${{ hashFiles('**/goss.yaml') }}
           restore-keys: |
             ${{ runner.os }}-goss-
-
       - name: Install Goss
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           echo "Installing Goss"
           curl -fsSL https://goss.rocks/install | sh
-
       - name: Verify Goss Installation
         run: |
           echo "Verifying Goss installation"
           which goss
           goss --version
-
       - name: Create Test Files
         run: |
           echo "Creating test files"
@@ -230,20 +220,17 @@ jobs:
           sudo chmod 0755 /tmp/goss_test_file
           sudo chmod 0644 /tmp/another_test_file /tmp/yet_another_test_file
           sudo chown root:root /tmp/goss_test_file /tmp/another_test_file /tmp/yet_another_test_file
-
       - name: Run Goss Tests
         run: |
           echo "Running Goss tests"
           goss -g goss.yaml validate --format json > goss-output.json || true
           echo "Goss test output:"
           cat goss-output.json || true
-
       - name: Collect Test Reports
         run: |
           echo "Collecting test reports"
           mkdir -p test-reports
           cp goss-output.json test-reports/
-
       - name: Upload Test Results
         uses: actions/upload-artifact@v2
         with:
@@ -274,7 +261,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-
   security_testing:
     runs-on: ubuntu-latest
     needs: push_dockerhub
@@ -292,7 +278,6 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
@@ -308,7 +293,6 @@ jobs:
       - name: Install Docker Scout
         run: |
           curl -sSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh
-
       - name: Run Docker Scout analysis
         run: docker scout cves ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
@@ -323,19 +307,16 @@ jobs:
       - name: Run Grafana container
         run: |
           docker run -d -p 3000:3000 --name grafana grafana/grafana:latest
-
       - name: Wait for Grafana to be ready
         run: |
           until curl -s http://localhost:3000/login | grep -q "Grafana"; do
             echo "Waiting for Grafana to start...";
             sleep 5;
           done
-
       - name: Configure Grafana (optional)
         run: |
           # Example: Set up a default Grafana dashboard, data sources, etc.
           echo "Setting up Grafana configurations"
-
       - name: Check Grafana status
         run: curl -s http://localhost:3000/api/health
 
