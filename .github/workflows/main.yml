@@ -313,7 +313,7 @@ jobs:
             echo "Waiting for Grafana to start...";
             sleep 5;
           done
-      - name: Configure Grafana (optional)
+      - name: Configure Grafana 
         run: |
           # Example: Set up a default Grafana dashboard, data sources, etc.
           echo "Setting up Grafana configurations"

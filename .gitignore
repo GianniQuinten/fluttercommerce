@@ -45,3 +45,6 @@ app.*.map.json
 #  backend directory for running the api on a backend server
 backend/node_modules
 
+/ca.crt.base64.txt
+/client.crt.base64.txt
+/client.key.base64.txt

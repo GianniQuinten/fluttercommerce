@@ -2,8 +2,7 @@ name: Deploy
 
 on:
   workflow_run:
-#    if the ci pipeline works. then this job gets triggerd
-#    the reason why the pipeline is not more split is because the lock file is preventing the pipeline from being split (for example tries to build for the file build.yml but if another file is running the pub spec then it wont work)
+    # if the ci pipeline works, then this job gets triggered
     workflows: ["CI for FlutterCommerce"]
     types:
       - completed
@@ -46,12 +45,41 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:${{ github.sha }}
             ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
-#      - name: Deploy to Production Server
-#        run: |
-#          ssh -i ~/.ssh/id_rsa user@production-server <<EOF
-#            docker pull ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-#            docker stop fluttercommerce || true
-#            docker rm fluttercommerce || true
-#            docker run -d --name fluttercommerce -p 80:80 ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
-#          EOF
-#
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'v1.21.0'  # Adjust the version as needed
+
+      - name: Create kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.CA_CERT }}" > $HOME/.kube/ca.crt
+          echo "${{ secrets.CLIENT_CERT }}" > $HOME/.kube/client.crt
+          echo "${{ secrets.CLIENT_KEY }}" > $HOME/.kube/client.key
+          cat <<EOF > $HOME/.kube/config
+          apiVersion: v1
+          clusters:
+          - cluster:
+              certificate-authority: $HOME/.kube/ca.crt
+              server: https://192.168.49.2:8443
+            name: minikube
+          contexts:
+          - context:
+              cluster: minikube
+              user: minikube
+              namespace: default
+            name: minikube
+          current-context: minikube
+          kind: Config
+          preferences: {}
+          users:
+          - name: minikube
+            user:
+              client-certificate: $HOME/.kube/client.crt
+              client-key: $HOME/.kube/client.key
+          EOF
+
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -f path/to/your/manifest.yml
+        env:
+          KUBECONFIG: $HOME/.kube/config
