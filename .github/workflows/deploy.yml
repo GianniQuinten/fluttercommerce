@@ -2,7 +2,7 @@ name: Deploy for FlutterCommerce
 
 on:
   push:
-    branches: [main.yml]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
