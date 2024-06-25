@@ -1,4 +1,4 @@
-name: Deploy for FlutterCommerce
+name: Deploy
 
 on:
   workflow_run:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Minikube
         uses: manusa/actions-setup-minikube@v2.4.1
         with:
-          minikube version: 'v1.30.0' # Specify the latest stable version
+          minikube version: 'v1.30.0'
           kubernetes version: 'latest'
           driver: 'docker'
 
@@ -26,3 +26,27 @@ jobs:
 
       - name: Verify Minikube status
         run: kubectl get nodes
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest'
+
+      - name: Deploy application
+        run: |
+          kubectl apply -f kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/service.yaml
+
+      - name: Wait for application to be ready
+        run: |
+          kubectl rollout status deployment/my-app
+
+      - name: Run cluster tests
+        run: |
+          # Replace with your actual test command
+          kubectl exec -it $(kubectl get pod -l app=my-app -o jsonpath="{.items[0].metadata.name}") -- ./run-tests.sh
+
+      - name: Cleanup
+        run: |
+          kubectl delete -f kubernetes/deployment.yaml
+          kubectl delete -f kubernetes/service.yaml
