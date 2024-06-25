@@ -47,8 +47,9 @@ jobs:
           kubectl apply -f kubernetes/service.yaml
 
       - name: Wait for application to be ready
+        timeout-minutes: 10
         run: |
-          kubectl rollout status deployment/fluttercommerce
+          kubectl rollout status deployment/fluttercommerce --timeout=600s
 
       - name: Describe deployment for debugging
         if: failure()
