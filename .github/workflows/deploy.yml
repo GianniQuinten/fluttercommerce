@@ -2,7 +2,7 @@ name: Deploy for FlutterCommerce
 
 on:
   push:
-    branches: [main]
+    branches: [main.yml]
   workflow_dispatch:
 
 jobs:
@@ -23,5 +23,5 @@ jobs:
         run: |
           until kubectl get nodes; do sleep 1; done
 
-      - name: Apply Kubernetes manifests
-        run: kubectl apply -f path/to/your/manifest.yml
+      - name: Verify Minikube status
+        run: kubectl get nodes
