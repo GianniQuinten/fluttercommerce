@@ -59,12 +59,18 @@ jobs:
       - name: Get pod details
         if: failure()
         run: |
-          kubectl get pods -l app=fluttercommerce -o jsonpath="{.items[*].metadata.name}"
+          kubectl get pods -l app=fluttercommerce -o jsonpath="{.items[*].metadata.name}" > pod_names.txt
+          cat pod_names.txt
+
+      - name: Describe each pod
+        if: failure()
+        run: |
+          for pod in $(cat pod_names.txt); do kubectl describe pod $pod; done
 
       - name: Get pod logs
         if: failure()
         run: |
-          for pod in $(kubectl get pods -l app=fluttercommerce -o jsonpath="{.items[*].metadata.name}"); do kubectl logs $pod; done
+          for pod in $(cat pod_names.txt); do kubectl logs $pod; done
 
       - name: Run cluster tests
         run: |
