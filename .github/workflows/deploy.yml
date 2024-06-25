@@ -27,15 +27,19 @@ jobs:
 
       - name: Wait for Minikube to start
         run: |
-          until kubectl get nodes; do sleep 1; done
+          until minikube status; do sleep 1; done
 
       - name: Verify Minikube status
-        run: kubectl get nodes
+        run: minikube status
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
         with:
           version: 'latest'
+
+      - name: Configure kubectl to use Minikube context
+        run: |
+          kubectl config use-context minikube
 
       - name: Deploy application
         run: |
