@@ -195,41 +195,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v1
+      - name: Set up Minikube
+        uses: manusa/actions-setup-minikube@v2.4.1
         with:
-          version: 'v1.21.0'
+          minikube-version: 'latest'
+          kubernetes-version: 'latest'
+          driver: 'docker'
 
-      - name: Create kubeconfig
+      - name: Wait for Minikube to start
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.CA_CERT }}" | base64 -d > $HOME/.kube/ca.crt
-          echo "${{ secrets.CLIENT_CERT }}" | base64 -d > $HOME/.kube/client.crt
-          echo "${{ secrets.CLIENT_KEY }}" | base64 -d > $HOME/.kube/client.key
-          cat <<EOF > $HOME/.kube/config
-          apiVersion: v1
-          clusters:
-          - cluster:
-              certificate-authority: $HOME/.kube/ca.crt
-              server: https://192.168.49.2:8443
-            name: minikube
-          contexts:
-          - context:
-              cluster: minikube
-              user: minikube
-              namespace: default
-            name: minikube
-          current-context: minikube
-          kind: Config
-          preferences: {}
-          users:
-          - name: minikube
-            user:
-              client-certificate: $HOME/.kube/client.crt
-              client-key: $HOME/.kube/client.key
-          EOF
-        env:
-          KUBECONFIG: $HOME/.kube/config
+          until kubectl get nodes; do sleep 1; done
 
       - name: Apply Kubernetes manifests
         run: kubectl apply -f path/to/your/manifest.yml
