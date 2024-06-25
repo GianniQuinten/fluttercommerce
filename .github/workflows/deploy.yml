@@ -39,12 +39,12 @@ jobs:
 
       - name: Wait for application to be ready
         run: |
-          kubectl rollout status deployment/my-app
+          kubectl rollout status deployment/fluttercommerce
 
       - name: Run cluster tests
         run: |
           # Replace with your actual test command
-          kubectl exec -it $(kubectl get pod -l app=my-app -o jsonpath="{.items[0].metadata.name}") -- ./run-tests.sh
+          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./run-tests.sh
 
       - name: Cleanup
         run: |
