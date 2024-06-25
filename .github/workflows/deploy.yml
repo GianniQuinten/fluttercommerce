@@ -1,10 +1,10 @@
 name: Deploy for FlutterCommerce
 
 on:
-  workflow_run:
-    workflows: ["CI for FlutterCommerce"]
-    types:
-      - completed
+  push:
+    branches: [ develop, docker, main ]
+#  pull_request:
+#    branches: [ develop, main ]
 
 jobs:
   deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Minikube
         uses: manusa/actions-setup-minikube@v2.4.1
         with:
-          minikube version: 'latest'
+          minikube version: 'v1.30.0' # Specify the latest stable version
           kubernetes version: 'latest'
           driver: 'docker'
 
