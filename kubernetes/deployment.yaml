@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: fluttercommerce
-          image: fluttercommerce-image:latest
+          image: ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest  # Docker Hub repo location is used
           ports:
             - containerPort: 8080
           env:

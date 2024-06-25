@@ -1,10 +1,15 @@
 name: Deploy
 
+#on:
+#  workflow_run:
+#    workflows: ["CI for FlutterCommerce"]
+#    types:
+#      - completed
+
 on:
-  workflow_run:
-    workflows: ["CI for FlutterCommerce"]
-    types:
-      - completed
+  push:
+    branches: [ develop, docker, main ]
+
 
 jobs:
   deploy:
@@ -13,11 +18,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
+
       - name: Set up Minikube
         uses: manusa/actions-setup-minikube@v2.4.1
         with:
-          minikube version: 'v1.30.0'
-          kubernetes version: 'latest'
+          minikube_version: 'v1.30.0'
+          kubernetes_version: 'latest'
           driver: 'docker'
 
       - name: Wait for Minikube to start
@@ -40,6 +60,21 @@ jobs:
       - name: Wait for application to be ready
         run: |
           kubectl rollout status deployment/fluttercommerce
+
+      - name: Describe deployment for debugging
+        if: failure()
+        run: |
+          kubectl describe deployment fluttercommerce
+
+      - name: Get pod details
+        if: failure()
+        run: |
+          kubectl get pods -l app=fluttercommerce -o jsonpath="{.items[*].metadata.name}"
+
+      - name: Get pod logs
+        if: failure()
+        run: |
+          for pod in $(kubectl get pods -l app=fluttercommerce -o jsonpath="{.items[*].metadata.name}"); do kubectl logs $pod; done
 
       - name: Run cluster tests
         run: |
