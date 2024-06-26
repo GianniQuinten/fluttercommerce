@@ -262,6 +262,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest
 
   deploy:
+    needs: push_dockerhub
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
