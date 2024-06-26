@@ -43,7 +43,7 @@ FROM nginx:latest
 COPY --from=builder /app/build/web /usr/share/nginx/html
 
 # Expose port 80 to the outside world
-EXPOSE 80
+EXPOSE 8080
 
 # Start Nginx and serve the content
 CMD ["nginx", "-g", "daemon off;"]

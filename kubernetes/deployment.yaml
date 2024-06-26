@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: fluttercommerce
-          image: ${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest  # Docker Hub repo location is used
+          image: giannivanlooij/fluttercommerce:latest  # hardcoded because secret does not work
           ports:
             - containerPort: 8080
           env:
