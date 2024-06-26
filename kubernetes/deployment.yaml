@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: fluttercommerce
-          image: giannivanlooij/fluttercommerce:latest  # hardcoded because secret does not work
+          image: giannivanlooij/fluttercommerce:latest
           ports:
             - containerPort: 8080
           env:
@@ -26,11 +26,17 @@ spec:
             httpGet:
               path: /health
               port: 8080
-            initialDelaySeconds: 5
+            initialDelaySeconds: 120
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
           livenessProbe:
             httpGet:
               path: /health
               port: 8080
-            initialDelaySeconds: 15
+            initialDelaySeconds: 180
             periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
