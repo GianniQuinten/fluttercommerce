@@ -18,6 +18,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-image
+          path: ./docker
+
       - name: Set up Minikube
         uses: manusa/actions-setup-minikube@v2.4.1
         with:
