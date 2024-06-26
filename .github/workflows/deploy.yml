@@ -6,11 +6,6 @@ on:
     types:
       - completed
 
-#on:
-#  push:
-#    branches: [ develop, docker, main ]
-
-
 jobs:
   deploy:
     runs-on: ubuntu-20.04
@@ -29,11 +24,16 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --release
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        run: docker buildx build --output type=oci,dest=image.tar --platform linux/amd64,linux/arm64 -t fluttercommerce:latest .
+      - name: Build and Push Docker image
+        run: |
+          docker build -t giannivanlooij/fluttercommerce:latest .
+          docker push giannivanlooij/fluttercommerce:latest
 
       - name: Set up Minikube
         uses: manusa/actions-setup-minikube@v2.4.1
@@ -55,23 +55,21 @@ jobs:
           version: 'latest'
 
       - name: Configure kubectl to use Minikube context
-        run: |
-          kubectl config use-context minikube
+        run: kubectl config use-context minikube
 
-      - name: Deploy application
+      - name: Update deployment image and Deploy application
         run: |
+          sed -i 's|${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest|giannivanlooij/fluttercommerce:latest|g' kubernetes/deployment.yaml
           kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
 
       - name: Wait for application to be ready
         timeout-minutes: 10
-        run: |
-          kubectl rollout status deployment/fluttercommerce --timeout=600s
+        run: kubectl rollout status deployment/fluttercommerce --timeout=600s
 
       - name: Describe deployment for debugging
         if: failure()
-        run: |
-          kubectl describe deployment fluttercommerce
+        run: kubectl describe deployment fluttercommerce
 
       - name: Get pod details
         if: failure()
