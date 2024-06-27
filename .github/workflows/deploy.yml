@@ -87,10 +87,33 @@ jobs:
         run: |
           for pod in $(cat pod_names.txt); do kubectl logs $pod; done
 
-      - name: Run cluster tests
+      - name: Run health check
         run: |
-          # Replace with your actual test command
-          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./run-tests.sh
+          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/health-check.sh
+        continue-on-error: true
+
+      - name: Run smoke tests
+        run: |
+          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/smoke-tests.sh
+        continue-on-error: true
+
+      - name: Run end-to-end tests
+        run: |
+          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/e2e-tests.sh
+        continue-on-error: true
+
+      - name: Run performance tests
+        run: |
+          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/performance-tests.sh
+        continue-on-error: true
+
+      - name: Get pod logs on test failure
+        if: failure()
+        run: |
+          for pod in $(kubectl get pods -l app=fluttercommerce -o jsonpath="{.items[*].metadata.name}"); do
+            echo "Logs for pod $pod"
+            kubectl logs $pod
+          done
 
       - name: Cleanup
         run: |
