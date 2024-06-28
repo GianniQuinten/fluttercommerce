@@ -50,12 +50,12 @@ jobs:
           kubectl cluster-info
           kubectl get nodes
 
-      - name: Debug API access
-        run: |
-          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
-          cat kubeconfig_cluster.yaml
-          echo "Testing API access with kubectl get nodes"
-          kubectl get nodes
+#      - name: Debug API access
+#        run: |
+#          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
+#          cat kubeconfig_cluster.yaml
+#          echo "Testing API access with kubectl get nodes"
+#          kubectl get nodes
 
       - name: Verify kubeconfig file path and permissions
         run: |
@@ -64,6 +64,7 @@ jobs:
 
       - name: Update deployment image and Deploy application
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           sed -i 's|giannivanlooij/fluttercommerce:latest|giannivanlooij/fluttercommerce:latest|g' kubernetes/deployment.yaml
           kubectl apply --validate=false -f kubernetes/deployment.yaml
           kubectl apply --validate=false -f kubernetes/service.yaml
