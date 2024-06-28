@@ -1,13 +1,11 @@
 name: Deploy
 
 on:
-#  workflow_run:
-#    workflows: ["CI for FlutterCommerce"]
-#    types:
-#      - completed
+  workflow_run:
+    workflows: ["CI for FlutterCommerce"]
+    types:
+      - completed
 
-  push:
-    branches: [ develop, docker, main ]
 jobs:
   deploy:
     runs-on: ubuntu-20.04
@@ -46,12 +44,13 @@ jobs:
         run: |
           echo "${{ secrets.RPI_KUBECONFIG }}" > kubeconfig_cluster.yaml
           export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
+          kubectl config use-context group20-context
 
-      - name: Deploy to RPI Cluster
+      - name: Update deployment image and Deploy application
         run: |
           sed -i 's|${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest|giannivanlooij/fluttercommerce:latest|g' kubernetes/deployment.yaml
-          kubectl apply -f kubernetes/deployment.yaml
-          kubectl apply -f kubernetes/service.yaml
+          kubectl apply --validate=false -f kubernetes/deployment.yaml
+          kubectl apply --validate=false -f kubernetes/service.yaml
 
       - name: Wait for application to be ready on RPI Cluster
         timeout-minutes: 10
