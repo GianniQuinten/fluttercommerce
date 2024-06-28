@@ -55,6 +55,11 @@ jobs:
           echo "Testing API access with kubectl get nodes"
           kubectl get nodes --request-timeout='30s'
 
+      - name: Verify kubeconfig file path and permissions
+        run: |
+          echo "Verifying kubeconfig file path and permissions"
+          ls -l $PWD/kubeconfig_cluster.yaml
+
       - name: Update deployment image and Deploy application
         run: |
           sed -i 's|giannivanlooij/fluttercommerce:latest|giannivanlooij/fluttercommerce:latest|g' kubernetes/deployment.yaml
