@@ -1,16 +1,8 @@
 name: Deploy
 
-#on:
-#  workflow_run:
-#    workflows: ["CI for FlutterCommerce"]
-#    types:
-#      - completed
-#
-
 on:
   push:
     branches: [ develop, docker, main ]
-
 
 jobs:
   deploy:
@@ -50,11 +42,18 @@ jobs:
         run: |
           echo "${{ secrets.RPI_KUBECONFIG }}" > kubeconfig_cluster.yaml
           export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
+          echo "Current kubeconfig:"
+          cat kubeconfig_cluster.yaml
           kubectl config get-contexts
           kubectl config use-context group20-context
           kubectl config current-context
           kubectl cluster-info
           kubectl get nodes
+
+      - name: Debug API access
+        run: |
+          echo "Testing API access with kubectl get nodes"
+          kubectl get nodes --request-timeout='30s'
 
       - name: Update deployment image and Deploy application
         run: |
