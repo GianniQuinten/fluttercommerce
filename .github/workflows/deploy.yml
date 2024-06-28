@@ -28,10 +28,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push Docker image
+      - name: Set up Docker buildx
         run: |
-          docker build -t giannivanlooij/fluttercommerce:latest .
-          docker push giannivanlooij/fluttercommerce:latest
+          docker buildx create --use
+
+      - name: Build and Push Multi-Platform Docker image
+        run: |
+          docker buildx build --platform linux/arm64,linux/amd64 -t giannivanlooij/fluttercommerce:latest --push .
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
@@ -50,18 +53,6 @@ jobs:
           kubectl cluster-info
           kubectl get nodes
 
-#      - name: Debug API access
-#        run: |
-#          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
-#          cat kubeconfig_cluster.yaml
-#          echo "Testing API access with kubectl get nodes"
-#          kubectl get nodes
-
-      - name: Verify kubeconfig file path and permissions
-        run: |
-          echo "Verifying kubeconfig file path and permissions"
-          ls -l $PWD/kubeconfig_cluster.yaml
-
       - name: Update deployment image and Deploy application
         run: |
           export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
@@ -75,7 +66,6 @@ jobs:
         run: |
           export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           kubectl rollout status deployment/fluttercommerce --timeout=600s
-            
 
       - name: Describe deployment for debugging
         if: failure()

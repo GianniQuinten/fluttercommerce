@@ -45,8 +45,11 @@ COPY --from=builder /app/build/web /usr/share/nginx/html
 # Add custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Ensure the entrypoint script is in the correct format and executable
+RUN chmod +x /docker-entrypoint.sh
+
 # Expose port 80 to the outside world
-EXPOSE 8080
+EXPOSE 80
 
 # Start Nginx and serve the content
 CMD ["nginx", "-g", "daemon off;"]
