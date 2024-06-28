@@ -1,6 +1,6 @@
 name: Deploy
 
-#on:
+on:
 #  workflow_run:
 #    workflows: ["CI for FlutterCommerce"]
 #    types:
