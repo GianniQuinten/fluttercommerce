@@ -72,15 +72,21 @@ jobs:
 
       - name: Wait for application to be ready on RPI Cluster
         timeout-minutes: 10
-        run: kubectl rollout status deployment/fluttercommerce --timeout=600s
+        run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
+          kubectl rollout status deployment/fluttercommerce --timeout=600s
+            
 
       - name: Describe deployment for debugging
         if: failure()
-        run: kubectl describe deployment fluttercommerce
+        run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
+          kubectl describe deployment fluttercommerce
 
       - name: Get pod details
         if: failure()
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           kubectl get pods -l app=fluttercommerce -o jsonpath="{.items[*].metadata.name}" > pod_names.txt
           cat pod_names.txt
 
