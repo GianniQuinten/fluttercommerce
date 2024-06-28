@@ -3,8 +3,7 @@ name: CI for FlutterCommerce
 on:
   push:
     branches: [ develop, docker, main ]
-#  pull_request:
-#    branches: [ develop, main ]
+
 
 jobs:
 

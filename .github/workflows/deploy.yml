@@ -1,8 +1,11 @@
 name: Deploy
 
 on:
-  push:
-    branches: [ develop, docker, main ]
+  workflow_run:
+    workflows: ["CI for FlutterCommerce"]
+    types:
+      - completed
+
 
 jobs:
   deploy:
