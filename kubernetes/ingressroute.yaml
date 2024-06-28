@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: fluttercommerce-route
+  namespace: group20
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`20.web.dops.tech`) && PathPrefix(`/`)
+      kind: Rule
+      services:
+        - name: fluttercommerce
+          port: 80
+  tls:
+    certResolver: myresolver

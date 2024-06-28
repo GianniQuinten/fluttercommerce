@@ -2,10 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fluttercommerce
+  namespace: group20
   labels:
     app: fluttercommerce
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: fluttercommerce
@@ -18,14 +19,15 @@ spec:
         - name: fluttercommerce
           image: giannivanlooij/fluttercommerce:latest
           ports:
-            - containerPort: 8080
+            - name: web
+              containerPort: 80
           env:
             - name: ENV_VAR
               value: "value"
           readinessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 80
             initialDelaySeconds: 120
             periodSeconds: 10
             timeoutSeconds: 5
@@ -34,9 +36,18 @@ spec:
           livenessProbe:
             httpGet:
               path: /health
-              port: 8080
+              port: 80
             initialDelaySeconds: 180
             periodSeconds: 20
             timeoutSeconds: 5
             failureThreshold: 3
             successThreshold: 1
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+      imagePullSecrets:
+        - name: registry-credentials

@@ -54,12 +54,14 @@ jobs:
           kubectl config use-context group20-context
           kubectl config current-context
           kubectl cluster-info
+          kubectl get nodes
 
       - name: Update deployment image and Deploy application
         run: |
-          sed -i 's|${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest|giannivanlooij/fluttercommerce:latest|g' kubernetes/deployment.yaml
+          sed -i 's|giannivanlooij/fluttercommerce:latest|giannivanlooij/fluttercommerce:latest|g' kubernetes/deployment.yaml
           kubectl apply --validate=false -f kubernetes/deployment.yaml
           kubectl apply --validate=false -f kubernetes/service.yaml
+          kubectl apply --validate=false -f kubernetes/ingressroute.yaml
 
       - name: Wait for application to be ready on RPI Cluster
         timeout-minutes: 10
@@ -87,12 +89,12 @@ jobs:
 
       - name: Run health check
         run: |
-          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/health-check.sh
+          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- curl -f http://localhost:80/health
         continue-on-error: true
 
       - name: Run smoke tests
         run: |
-          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/smoke-tests.sh
+          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- curl -f http://localhost:80
         continue-on-error: true
 
       - name: Run end-to-end tests
@@ -117,3 +119,4 @@ jobs:
         run: |
           kubectl delete -f kubernetes/deployment.yaml
           kubectl delete -f kubernetes/service.yaml
+          kubectl delete -f kubernetes/ingressroute.yaml
