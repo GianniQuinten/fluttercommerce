@@ -93,36 +93,43 @@ jobs:
       - name: Describe each pod
         if: failure()
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           for pod in $(cat pod_names.txt); do kubectl describe pod $pod; done
 
       - name: Get pod logs
         if: failure()
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           for pod in $(cat pod_names.txt); do kubectl logs $pod; done
 
       - name: Run health check
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- curl -f http://localhost:80/health
         continue-on-error: true
 
       - name: Run smoke tests
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- curl -f http://localhost:80
         continue-on-error: true
 
       - name: Run end-to-end tests
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/e2e-tests.sh
         continue-on-error: true
 
       - name: Run performance tests
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/performance-tests.sh
         continue-on-error: true
 
       - name: Get pod logs on test failure
         if: failure()
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           for pod in $(kubectl get pods -l app=fluttercommerce -o jsonpath="{.items[*].metadata.name}"); do
             echo "Logs for pod $pod"
             kubectl logs $pod
@@ -130,6 +137,7 @@ jobs:
 
       - name: Cleanup RPI Cluster
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
           kubectl delete -f kubernetes/deployment.yaml
           kubectl delete -f kubernetes/service.yaml
           kubectl delete -f kubernetes/ingressroute.yaml
