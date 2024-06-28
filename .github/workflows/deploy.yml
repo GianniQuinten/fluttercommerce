@@ -6,9 +6,8 @@ on:
 #    types:
 #      - completed
 
-  pull_request:
-    branches: [ develop, main ]
-
+  push:
+    branches: [ develop, docker, main ]
 jobs:
   deploy:
     runs-on: ubuntu-20.04
