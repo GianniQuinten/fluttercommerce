@@ -53,7 +53,7 @@ jobs:
       - name: Debug API access
         run: |
           echo "Testing API access with kubectl get nodes"
-          kubectl get nodes --request-timeout='30s'
+          kubectl get nodes
 
       - name: Verify kubeconfig file path and permissions
         run: |
