@@ -1,14 +1,10 @@
 name: Deploy
 
-#on:
-#  workflow_run:
-#    workflows: ["CI for FlutterCommerce"]
-#    types:
-#      - completed
-
 on:
-  push:
-    branches: [ develop, docker, main ]
+  workflow_run:
+    workflows: ["CI for FlutterCommerce"]
+    types:
+      - completed
 
 jobs:
   deploy:
@@ -48,7 +44,10 @@ jobs:
         run: |
           echo "${{ secrets.RPI_KUBECONFIG }}" > kubeconfig_cluster.yaml
           export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
+          kubectl config get-contexts
           kubectl config use-context group20-context
+          kubectl config current-context
+          kubectl cluster-info
 
       - name: Update deployment image and Deploy application
         run: |
