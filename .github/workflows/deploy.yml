@@ -52,6 +52,8 @@ jobs:
 
       - name: Debug API access
         run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
+          cat kubeconfig_cluster.yaml
           echo "Testing API access with kubectl get nodes"
           kubectl get nodes
 
