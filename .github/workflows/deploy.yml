@@ -1,14 +1,14 @@
 name: Deploy
 
-on:
-  workflow_run:
-    workflows: ["CI for FlutterCommerce"]
-    types:
-      - completed
-
 #on:
-#  push:
-#    branches: [ develop, docker, main ]
+#  workflow_run:
+#    workflows: ["CI for FlutterCommerce"]
+#    types:
+#      - completed
+
+on:
+  push:
+    branches: [ develop, docker, main ]
 
 jobs:
   deploy:
@@ -39,35 +39,34 @@ jobs:
           docker build -t giannivanlooij/fluttercommerce:latest .
           docker push giannivanlooij/fluttercommerce:latest
 
-      - name: Set up Minikube
-        uses: manusa/actions-setup-minikube@v2.4.1
-        with:
-          'minikube version': 'v1.30.0'
-          'kubernetes version': 'latest'
-          'driver': 'docker'
-
-      - name: Wait for Minikube to start
-        run: |
-          until kubectl get nodes; do sleep 1; done
-
-      - name: Verify Minikube status
-        run: kubectl get nodes
-
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
         with:
           version: 'latest'
 
-      - name: Configure kubectl to use Minikube context
+      - name: Use Minikube context
         run: kubectl config use-context minikube
 
-      - name: Update deployment image and Deploy application
+      - name: Deploy to Minikube
         run: |
           sed -i 's|${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest|giannivanlooij/fluttercommerce:latest|g' kubernetes/deployment.yaml
           kubectl apply -f kubernetes/deployment.yaml
           kubectl apply -f kubernetes/service.yaml
 
-      - name: Wait for application to be ready
+      - name: Wait for application to be ready on Minikube
+        timeout-minutes: 10
+        run: kubectl rollout status deployment/fluttercommerce --timeout=600s
+
+      - name: Use RPI cluster context
+        run: kubectl config use-context group20-context
+
+      - name: Deploy to RPI Cluster
+        run: |
+          sed -i 's|${{ secrets.DOCKER_USERNAME }}/fluttercommerce:latest|giannivanlooij/fluttercommerce:latest|g' kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/service.yaml
+
+      - name: Wait for application to be ready on RPI Cluster
         timeout-minutes: 10
         run: kubectl rollout status deployment/fluttercommerce --timeout=600s
 
@@ -119,7 +118,14 @@ jobs:
             kubectl logs $pod
           done
 
-      - name: Cleanup
+      - name: Cleanup Minikube
         run: |
+          kubectl config use-context minikube
+          kubectl delete -f kubernetes/deployment.yaml
+          kubectl delete -f kubernetes/service.yaml
+
+      - name: Cleanup RPI Cluster
+        run: |
+          kubectl config use-context group20-context
           kubectl delete -f kubernetes/deployment.yaml
           kubectl delete -f kubernetes/service.yaml
