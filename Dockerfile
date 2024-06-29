@@ -1,11 +1,34 @@
-# Use an official Ubuntu image as a parent image
-FROM ubuntu:20.04 as builder
+# Use an official Node.js image as a parent image for backend
+FROM node:14-alpine as backend-builder
+
+# Set working directory for backend
+WORKDIR /app/backend
+
+# Copy backend source code
+COPY backend/package*.json ./
+RUN npm install
+
+# Copy backend source code
+COPY backend .
+
+# Environment variables for backend
+ENV MONGO_URI mongodb://localhost:27017/sneaks
+ENV PORT 4000
+
+# Expose backend port
+EXPOSE $PORT
+
+# Command to run the backend server
+CMD ["node", "server.js"]
+
+# Use an official Ubuntu image as a parent image for Flutter
+FROM ubuntu:20.04 as flutter-builder
 
 # Set the timezone environment variable non-interactively
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Etc/UTC
 
-# Install required dependencies
+# Install required dependencies for Flutter
 RUN apt-get update && apt-get install -y \
   curl \
   git \
@@ -39,8 +62,11 @@ RUN flutter clean && flutter build web --release
 # Use an official Nginx image as the base image for serving content
 FROM nginx:latest
 
-# Copy built Flutter web app from builder stage
-COPY --from=builder /app/build/web /usr/share/nginx/html
+# Copy built Flutter web app from flutter-builder stage
+COPY --from=flutter-builder /app/build/web /usr/share/nginx/html
+
+# Copy built Node.js backend from backend-builder stage
+COPY --from=backend-builder /app/backend /app/backend
 
 # Add custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf

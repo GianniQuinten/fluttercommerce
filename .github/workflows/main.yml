@@ -2,7 +2,7 @@ name: CI for FlutterCommerce
 
 on:
   push:
-    branches: [ develop, docker, main ]
+    branches: multibuild
 
 
 jobs:
