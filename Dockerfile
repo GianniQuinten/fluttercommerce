@@ -69,7 +69,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     xz-utils \
     libglu1-mesa \
-    sudo
+    sudo \
+    -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
 
 # Setup supervisor to manage processes
 COPY supervisord.conf /etc/supervisor/supervisord.conf
