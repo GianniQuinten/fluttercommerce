@@ -56,6 +56,14 @@ jobs:
           kubectl cluster-info
           kubectl get nodes
 
+      #       to clean the cluster
+      - name: Cleanup RPI Cluster
+        run: |
+          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
+          kubectl delete -f kubernetes/deployment.yaml
+          kubectl delete -f kubernetes/service.yaml
+          kubectl delete -f kubernetes/ingressroute.yaml
+
       - name: Update deployment image and Deploy application
         run: |
           export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
@@ -115,10 +123,3 @@ jobs:
             echo "Logs for pod $pod"
             kubectl logs $pod
           done
-
-#      - name: Cleanup RPI Cluster
-#        run: |
-#          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
-#          kubectl delete -f kubernetes/deployment.yaml
-#          kubectl delete -f kubernetes/service.yaml
-#          kubectl delete -f kubernetes/ingressroute.yaml
