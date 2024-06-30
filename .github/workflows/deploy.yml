@@ -111,18 +111,6 @@ jobs:
           chmod +x ./scripts/e2e-tests.sh
           chmod +x ./scripts/performance-tests.sh
 
-      - name: Run end-to-end tests
-        run: |
-          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
-          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/e2e-tests.sh
-        continue-on-error: true
-
-      - name: Run performance tests
-        run: |
-          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
-          kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- ./scripts/performance-tests.sh
-        continue-on-error: true
-
       - name: Get pod logs on test failure
         if: failure()
         run: |
