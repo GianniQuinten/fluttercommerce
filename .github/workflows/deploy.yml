@@ -106,11 +106,6 @@ jobs:
           kubectl exec -it $(kubectl get pod -l app=fluttercommerce -o jsonpath="{.items[0].metadata.name}") -- curl -f http://localhost:80
         continue-on-error: true
 
-      - name: Set executable permissions
-        run: |
-          chmod +x ./scripts/e2e-tests.sh
-          chmod +x ./scripts/performance-tests.sh
-
       - name: Get pod logs on test failure
         if: failure()
         run: |
