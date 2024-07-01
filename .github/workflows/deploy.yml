@@ -43,13 +43,6 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Cleanup RPI Cluster
-        run: |
-          export KUBECONFIG=$PWD/kubeconfig_cluster.yaml
-          kubectl delete -f kubernetes/deployment.yaml
-          kubectl delete -f kubernetes/service.yaml
-          kubectl delete -f kubernetes/ingressroute.yaml
-
       - name: Configure kubectl to use RPI cluster context
         run: |
           echo "${{ secrets.RPI_KUBECONFIG }}" > kubeconfig_cluster.yaml
