@@ -121,3 +121,5 @@ jobs:
             echo "Logs for pod $pod"
             kubectl logs $pod
           done
+
+
